@@ -112,7 +112,7 @@ static BtNodeFactoryRegister<MyActionNode> gsActionReg;
 int main()
 {
 	BtParamsPtr params = RfNew BtParams(32);
-	BtNodePtr root = BtXmlGenerator::generate("./Samples/bt_hello.xml");
+	BtNodePtr root = BtXmlGenerator::generate("./bt_hello.xml");
 
 	if (root)
 	{
