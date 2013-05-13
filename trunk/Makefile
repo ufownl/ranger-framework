@@ -139,9 +139,7 @@ BtConditionNode_src = $(BehTree_dir)/BtConditionNode.cpp
 BtActionNode_src = $(BehTree_dir)/BtActionNode.cpp
 BtXmlGenerator_src = $(BehTree_dir)/BtXmlGenerator.cpp
 
-all: create_dir $(out_debug) $(out_release) make_samples
-
-make_samples: $(out_debug) $(out_release)
+all: create_dir $(out_debug) $(out_release)
 	make -C Samples
 
 $(out_debug): $(obj_debug)
@@ -328,4 +326,4 @@ clean:
 	-rmdir $(obj_dir_release)
 	-rmdir $(obj_dir)
 
-.PHONY: all create_dir make_samples clean
+.PHONY: all create_dir clean
