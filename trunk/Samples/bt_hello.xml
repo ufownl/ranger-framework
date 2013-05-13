@@ -18,15 +18,15 @@
 -->
 <BtRoot class = "BtSelectorNode">
 	<BtNode class = "BtSequenceNode">
-		<BtNode class = "MyConditionNode" script = "./Samples/bt_hello_condition.lua">
+		<BtNode class = "MyConditionNode" script = "./bt_hello_condition.lua">
 			<BtParam name = "COND" value = "1" />
 		</BtNode>
-		<BtNode class = "MyActionNode" script = "./Samples/bt_hello_action_1.lua" />
+		<BtNode class = "MyActionNode" script = "./bt_hello_action_1.lua" />
 	</BtNode>
 	<BtNode class = "BtSequenceNode">
-		<BtNode class = "MyConditionNode" script = "./Samples/bt_hello_condition.lua">
+		<BtNode class = "MyConditionNode" script = "./bt_hello_condition.lua">
 			<BtParam name = "COND" value = "2" />
 		</BtNode>
-		<BtNode class = "MyActionNode" script = "./Samples/bt_hello_action_2.lua" />
+		<BtNode class = "MyActionNode" script = "./bt_hello_action_2.lua" />
 	</BtNode>
 </BtRoot>
