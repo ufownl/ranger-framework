@@ -141,6 +141,7 @@ BtXmlGenerator_src = $(BehTree_dir)/BtXmlGenerator.cpp
 
 all: create_dir $(out_debug) $(out_release)
 	make -C Samples
+	make -C test
 
 $(out_debug): $(obj_debug)
 	$(ld_debug)
@@ -316,6 +317,7 @@ create_dir:
 	mkdir -p $(out_dir)
 
 clean:
+	make -C test clean
 	make -C Samples clean
 	rm -f $(out_debug)
 	rm -f $(out_release)

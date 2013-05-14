@@ -16,23 +16,16 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __Utils_MPL_bind_H__
-#define __Utils_MPL_bind_H__
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
-template <template <class, class> class _bin_t, class _arg>
-struct bind
+int main()
 {
-	template <class T>
-	struct first : public _bin_t<_arg, T>
-	{
-		typedef _bin_t<_arg, T> type;
-	};
-	
-	template <class T>
-	struct second : public _bin_t<T, _arg>
-	{
-		typedef _bin_t<T, _arg> type;
-	};
-};
+	CppUnit::TextUi::TestRunner runner;
+	CppUnit::TestFactoryRegistry& registry = CppUnit::TestFactoryRegistry::getRegistry();
 
-#endif  // __Utils_MPL_bind_H__
+	runner.addTest(registry.makeTest());
+	runner.run();
+
+	return 0;
+}

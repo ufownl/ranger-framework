@@ -16,34 +16,62 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __Utils_Object_Visitor_H__
-#define __Utils_Object_Visitor_H__
+#include "cppunit/extensions/HelperMacros.h"
+#include "Thread/MutexCaller.h"
 
-#include "MPL/hierarchy_generator.h"
-#include "MPL/bind.h"
-
-template <class T, class R>
-struct VisitorUnit
+struct Lock
 {
-	virtual R onVisit(T&) = 0;
+	Lock()
+		: isLock(false)
+	{
+	}
+
+	void lock()
+	{
+		isLock = true;
+	}
+
+	void unlock()
+	{
+		isLock = false;
+	}
+
+	bool isLock;
 };
 
-template <class _seq, class R = void>
-struct Visitor : public scatter_hierarchy<_seq, bind<VisitorUnit, R>::template second>
+struct Dummy
 {
-	typedef R Result;
-
-	template <class T>
-	R visit(T& host)
+	bool func(const Lock& lock)
 	{
-		VisitorUnit<T, R>* p = this;
-		return p->onVisit(host);
+		return lock.isLock;
 	}
 };
 
-#define VISITABLE_DECL_ABS(_visitor)	virtual _visitor::Result accept(_visitor&) = 0;
-#define VISITABLE_DECL(_visitor)		virtual _visitor::Result accept(_visitor&);
-#define VISITABLE_IMPL(_host, _visitor)	\
-	_visitor::Result _host::accept(_visitor& v) { return v.visit(*this); }
+class MutexCallerTest : public CppUnit::TestFixture
+{
+	CPPUNIT_TEST_SUITE(MutexCallerTest);
+	CPPUNIT_TEST(test);
+	CPPUNIT_TEST_SUITE_END();
 
-#endif  // __Utils_Object_Visitor_H__
+public:
+	virtual void setUp()
+	{
+	}
+
+	virtual void tearDown()
+	{
+	}
+
+private:
+	void test()
+	{
+		Dummy dummy;
+		MutexCaller<Dummy*, Lock> proxy(&dummy);
+
+		CPPUNIT_ASSERT(!proxy.getLock().isLock);
+		CPPUNIT_ASSERT(proxy->func(proxy.getLock()));
+		CPPUNIT_ASSERT(!proxy.getLock().isLock);
+	}
+};
+
+CPPUNIT_TEST_SUITE_REGISTRATION(MutexCallerTest);
