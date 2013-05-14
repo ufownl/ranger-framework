@@ -16,34 +16,56 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __Utils_Object_Visitor_H__
-#define __Utils_Object_Visitor_H__
+#include "cppunit/extensions/HelperMacros.h"
+#include "Thread/ScopedLock.h"
 
-#include "MPL/hierarchy_generator.h"
-#include "MPL/bind.h"
-
-template <class T, class R>
-struct VisitorUnit
+struct Lock
 {
-	virtual R onVisit(T&) = 0;
+	Lock()
+		: isLock(false)
+	{
+	}
+
+	void lock()
+	{
+		isLock = true;
+	}
+
+	void unlock()
+	{
+		isLock = false;
+	}
+
+	bool isLock;
 };
 
-template <class _seq, class R = void>
-struct Visitor : public scatter_hierarchy<_seq, bind<VisitorUnit, R>::template second>
+class ScopedLockTest : public CppUnit::TestFixture
 {
-	typedef R Result;
+	CPPUNIT_TEST_SUITE(ScopedLockTest);
+	CPPUNIT_TEST(test);
+	CPPUNIT_TEST_SUITE_END();
 
-	template <class T>
-	R visit(T& host)
+public:
+	virtual void setUp()
 	{
-		VisitorUnit<T, R>* p = this;
-		return p->onVisit(host);
+	}
+
+	virtual void tearDown()
+	{
+	}
+
+private:
+	void test()
+	{
+		Lock lock;
+
+		CPPUNIT_ASSERT(!lock.isLock);
+		{
+			ScopedLock<Lock> sl(lock);
+			CPPUNIT_ASSERT(lock.isLock);
+		}
+		CPPUNIT_ASSERT(!lock.isLock);
 	}
 };
 
-#define VISITABLE_DECL_ABS(_visitor)	virtual _visitor::Result accept(_visitor&) = 0;
-#define VISITABLE_DECL(_visitor)		virtual _visitor::Result accept(_visitor&);
-#define VISITABLE_IMPL(_host, _visitor)	\
-	_visitor::Result _host::accept(_visitor& v) { return v.visit(*this); }
-
-#endif  // __Utils_Object_Visitor_H__
+CPPUNIT_TEST_SUITE_REGISTRATION(ScopedLockTest);
