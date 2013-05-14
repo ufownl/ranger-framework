@@ -250,22 +250,22 @@ public:
 		return std::equal_range(mBackend.begin(), mBackend.end(), value_type(key, mapped_type()), value_comp());
 	}
 
-	std::pair<iterator, iterator> lower_bound(const key_type& key)
+	iterator lower_bound(const key_type& key)
 	{
 		return std::lower_bound(mBackend.begin(), mBackend.end(), value_type(key, mapped_type()), value_comp());
 	}
 
-	std::pair<const_iterator, const_iterator> lower_bound(const key_type& key) const
+	const_iterator lower_bound(const key_type& key) const
 	{
 		return std::lower_bound(mBackend.begin(), mBackend.end(), value_type(key, mapped_type()), value_comp());
 	}
 
-	std::pair<iterator, iterator> upper_bound(const key_type& key)
+	iterator upper_bound(const key_type& key)
 	{
 		return std::upper_bound(mBackend.begin(), mBackend.end(), value_type(key, mapped_type()), value_comp());
 	}
 
-	std::pair<const_iterator, const_iterator> upper_bound(const key_type& key) const
+	const_iterator upper_bound(const key_type& key) const
 	{
 		return std::upper_bound(mBackend.begin(), mBackend.end(), value_type(key, mapped_type()), value_comp());
 	}
