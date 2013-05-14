@@ -42,7 +42,7 @@ private:
 
     private:
         MutexCaller *mHost;
-        ScopedLock<> mLock;
+        ScopedLock<_lock> mLock;
     };
 
 public:
