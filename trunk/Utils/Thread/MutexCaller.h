@@ -22,7 +22,7 @@
 #include "Thread/ScopedLock.h"
 #include <assert.h>
 
-template <class _ptr>
+template <class _ptr, class _lock = Mutex>
 class MutexCaller
 {
 private:
@@ -31,7 +31,7 @@ private:
     public:
         Proxy(MutexCaller *host)
             : mHost(host)
-            , mLock(*host->getMutex())
+            , mLock(host->getLock())
         {
         }
 
@@ -62,9 +62,9 @@ public:
         return mInstance;
     }
 
-    Mutex* getMutex()
+    _lock& getLock()
     {
-        return &mMutex;
+        return mLock;
     }
 
 private:
@@ -73,7 +73,7 @@ private:
 
 private:
     _ptr mInstance;
-    Mutex mMutex;
+    _lock mLock;
 };
 
 #endif  // __Utils_Thread_MutexCaller_H__

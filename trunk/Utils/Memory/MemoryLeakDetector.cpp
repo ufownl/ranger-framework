@@ -51,7 +51,7 @@ void MemoryLeakDetector::onDeallocate(void *p)
 
 void MemoryLeakDetector::checkMemoryState(MemoryState &state)
 {
-	ScopedLock<> lock(*mStateProxy.getMutex());
+	ScopedLock<> lock(mStateProxy.getLock());
 	state = mState;
 }
 
@@ -77,7 +77,7 @@ void MemoryLeakDetector::dumpDifferences(const MemoryState &s0, const MemoryStat
 
 void MemoryLeakDetector::dumpMemoryState()
 {
-	ScopedLock<> lock(*mStateProxy.getMutex());
+	ScopedLock<> lock(mStateProxy.getLock());
 	size_t total = 0;
 
 	for (MemoryState::iterator i = mState.begin(); i != mState.end(); ++i)
