@@ -18,6 +18,7 @@
 
 #include "Memory/Allocator.h"
 #include "Memory/MemoryLeakDetector.h"
+#include <limits>
 #include <stdlib.h>
 
 static Allocator gsAllocator;
@@ -54,4 +55,9 @@ void Allocator::deallocate(void* p)
 void Allocator::deallocate(void* p, size_t)
 {
 	deallocate(p);
+}
+
+size_t Allocator::max_size()
+{
+	return std::numeric_limits<size_t>::max();
 }

@@ -20,7 +20,7 @@
 #define __BehaviorTree_BtBehaviorNode_H__
 
 #include "BtNode.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include <lua.hpp>
 #include <string>
 #include <vector>
@@ -54,7 +54,7 @@ protected:
 private:
 	typedef std::vector<
 		std::pair<std::string, double>,
-		std_alloc<std::pair<std::string, double> >
+		stl_alloc<std::pair<std::string, double> >::type
 	> BtParamTable;
 
 	std::string mScript;

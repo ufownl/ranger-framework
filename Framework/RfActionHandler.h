@@ -20,7 +20,7 @@
 #define __RangerFramework_RfActionHandler_H__
 
 #include "RfAction.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include "Object/ObjectPool.h"
 #include <queue>
 
@@ -52,7 +52,10 @@ private:
 	};
 
 	typedef ObjectPool<action_wrapper_t, ::SingleThread> RfActionPool;
-	typedef std::queue<RfActionPtr, std::deque<RfActionPtr, std_alloc<RfActionPtr> > > RfActionTickQueue;
+	typedef std::queue<
+		RfActionPtr,
+		std::deque<RfActionPtr, stl_alloc<RfActionPtr>::type>
+	> RfActionTickQueue;
 
 	RfActionPool mActPool;
 	RfActionTickQueue mActTick;

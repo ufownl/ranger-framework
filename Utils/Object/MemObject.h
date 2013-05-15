@@ -23,7 +23,7 @@
 #include <exception>
 #include <memory>
 
-template <class _Alloc = Allocator>
+template <class _alloc = Allocator>
 class MemObject
 {
 public:
@@ -36,7 +36,7 @@ public:
 			size = 1;
 		}
 
-		void* p = _Alloc::getSingleton().allocate(size, file, line);
+		void* p = _alloc::getSingleton().allocate(size, file, line);
 
 		if (!p)
 		{
@@ -53,7 +53,7 @@ public:
 			size = 1;
 		}
 
-		void* p = _Alloc::getSingleton().allocate(size, file, line);
+		void* p = _alloc::getSingleton().allocate(size, file, line);
 
 		if (!p)
 		{
@@ -67,7 +67,7 @@ public:
 	{
 		if (p)
 		{
-			_Alloc::getSingleton().deallocate(p);
+			_alloc::getSingleton().deallocate(p);
 		}
 	}
 
@@ -75,7 +75,7 @@ public:
 	{
 		if (p)
 		{
-			_Alloc::getSingleton().deallocate(p);
+			_alloc::getSingleton().deallocate(p);
 		}
 	}
 
@@ -88,7 +88,7 @@ public:
 			size = 1;
 		}
 
-		void* p = _Alloc::getSingleton().allocate(size);
+		void* p = _alloc::getSingleton().allocate(size);
 
 		if (!p)
 		{
@@ -105,7 +105,7 @@ public:
 			size = 1;
 		}
 
-		void* p = _Alloc::getSingleton().allocate(size);
+		void* p = _alloc::getSingleton().allocate(size);
 
 		if (!p)
 		{
@@ -121,7 +121,7 @@ public:
 	{
 		if (p)
 		{
-			_Alloc::getSingleton().deallocate(p, size);
+			_alloc::getSingleton().deallocate(p, size);
 		}
 	}
 
@@ -129,7 +129,7 @@ public:
 	{
 		if (p)
 		{
-			_Alloc::getSingleton().deallocate(p, size);
+			_alloc::getSingleton().deallocate(p, size);
 		}
 	}
 };

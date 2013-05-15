@@ -18,6 +18,7 @@
 
 #include "Memory/TCMallocAllocator.h"
 #include "Memory/MemoryLeakDetector.h"
+#include <limits>
 #include <tcmalloc.h>
 
 TCMallocAllocator gTCMallocAllocator;
@@ -54,4 +55,9 @@ void TCMallocAllocator::deallocate(void* p)
 void TCMallocAllocator::deallocate(void* p, size_t)
 {
 	deallocate(p);
+}
+
+size_t TCMallocAllocator::max_size()
+{
+	return std::numeric_limits<size_t>::max();
 }
