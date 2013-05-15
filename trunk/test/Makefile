@@ -33,9 +33,9 @@ define ld_run
 $(ld) $^ $(ldflags) -o $@
 endef
 
-all: ranger_framework_test
+all: test
 
-ranger_framework_test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o
+test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o
 	$(ld_run)
 
 main.o: main.cpp
@@ -53,7 +53,10 @@ ThreadPolicyTest.o: Utils/Thread/ThreadPolicyTest.cpp
 CoroutineTest.o: Utils/Thread/CoroutineTest.cpp
 	$(cxx_run)
 
+ThreadLocalStorageTest.o: Utils/Thread/ThreadLocalStorageTest.cpp
+	$(cxx_run)
+
 clean:
-	rm -f ranger_framework_test *.o
+	rm -f test *.o
 
 .PHONY: all clean
