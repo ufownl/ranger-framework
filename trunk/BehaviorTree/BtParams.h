@@ -21,7 +21,7 @@
 
 #include "Object/RefObject.h"
 #include "Object/SmartPointer.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include <vector>
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
@@ -74,7 +74,7 @@ private:
 	};
 
 private:
-	typedef std::vector<BtCache, std_alloc<BtCache> > BtCacheTable;
+	typedef std::vector<BtCache, stl_alloc<BtCache>::type> BtCacheTable;
 
 	BtCacheTable mCache;
 	void* mExtra;

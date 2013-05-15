@@ -22,7 +22,7 @@
 #include "Thread/ThreadPolicy.h"
 #include "Thread/ScopedLock.h"
 #include "Container/instrusive_slist.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -98,7 +98,7 @@ public:
 	}
 
 private:
-	std::vector<T, std_alloc<T> > mPool;
+	std::vector<T, typename stl_alloc<T>::type> mPool;
 	instrusive_slist<T> mFree;
 	callback_t mOnAlloc;
 	callback_t mOnDealloc;

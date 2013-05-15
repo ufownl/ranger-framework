@@ -33,6 +33,8 @@ public:
 
     static void deallocate(void* p);
 	static void deallocate(void* p, size_t);
+
+	static size_t max_size();
 };
 
 #endif  // __Utils_Memory_Allocator_H__

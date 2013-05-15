@@ -21,14 +21,19 @@
 
 #include "Object/TypeInfo.h"
 #include "Container/associate_vector.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 
 template <class _lhs_base, class _rhs_base, class _result, class _callback, class _error_handler>
 class BasicDispatcher
 {
 private:
 	typedef std::pair<TypeInfo, TypeInfo> key_t;
-	typedef associate_vector<key_t, _callback, std::less<key_t>, std_alloc<std::pair<key_t, _callback> > > map_t;
+	typedef associate_vector<
+		key_t,
+		_callback,
+		std::less<key_t>,
+		typename stl_alloc<std::pair<key_t, _callback> >::type
+	> map_t;
 
 public:
 	template <class _lhs, class _rhs>

@@ -16,8 +16,6 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef _DEBUG
-
 #include "Memory/MemoryLeakDetector.h"
 #include <stdio.h>
 
@@ -55,6 +53,19 @@ void MemoryLeakDetector::checkMemoryState(MemoryState &state)
 	state = mState;
 }
 
+void MemoryLeakDetector::dumpMemoryState()
+{
+	ScopedLock<> lock(mStateProxy.getLock());
+	size_t total = 0;
+
+	for (MemoryState::iterator i = mState.begin(); i != mState.end(); ++i)
+	{
+		total += i->size;
+        fprintf(stderr, "addr: 0x%08lX  size: %-4lu  file: %s (%ld)\n", (long unsigned int)i->addr, i->size, i->file, i->line);
+	}
+	fprintf(stderr, "Total: %lu bytes.\n", total);
+}
+
 void MemoryLeakDetector::dumpDifferences(const MemoryState &s0, const MemoryState &s1)
 {
 	MemoryState state = s1;
@@ -74,18 +85,3 @@ void MemoryLeakDetector::dumpDifferences(const MemoryState &s0, const MemoryStat
 	}
 	fprintf(stderr, "Total: %lu bytes.\n", total);
 }
-
-void MemoryLeakDetector::dumpMemoryState()
-{
-	ScopedLock<> lock(mStateProxy.getLock());
-	size_t total = 0;
-
-	for (MemoryState::iterator i = mState.begin(); i != mState.end(); ++i)
-	{
-		total += i->size;
-        fprintf(stderr, "addr: 0x%08lX  size: %-4lu  file: %s (%ld)\n", (long unsigned int)i->addr, i->size, i->file, i->line);
-	}
-	fprintf(stderr, "Total: %lu bytes.\n", total);
-}
-
-#endif  // _DEBUG

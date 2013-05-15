@@ -19,8 +19,6 @@
 #ifndef __Utils_Memory_MemoryLeakDetector_H__
 #define __Utils_Memory_MemoryLeakDetector_H__
 
-#ifdef _DEBUG
-
 #include "Object/Singleton.h"
 #include "Thread/MutexCaller.h"
 #include <list>
@@ -50,14 +48,13 @@ public:
     void onDeallocate(void *p);
 
     void checkMemoryState(MemoryState &state);
-    void dumpDifferences(const MemoryState &s0, const MemoryState &s1);
     void dumpMemoryState();
+
+    static void dumpDifferences(const MemoryState &s0, const MemoryState &s1);
 
 private:
     MemoryState mState;
     MutexCaller<MemoryState*> mStateProxy;
 };
-
-#endif  // _DEBUG
 
 #endif  // __Utils_Memory_MemoryLeakDetector_H__

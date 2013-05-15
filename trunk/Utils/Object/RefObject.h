@@ -24,16 +24,16 @@
 #include "Thread/ScopedLock.h"
 
 template <
-	class _Alloc = Allocator,
+	class _alloc = Allocator,
 	class _storage = unsigned int,
 	template <class> class _thread_policy = ObjectLevelLockable
 >
 class RefObject
-	: public MemObject<_Alloc>
-	, public _thread_policy<RefObject<_Alloc, _storage, _thread_policy> >
+	: public MemObject<_alloc>
+	, public _thread_policy<RefObject<_alloc, _storage, _thread_policy> >
 {
 public:
-	typedef _thread_policy<RefObject<_Alloc, _storage, _thread_policy> > ThreadPolicy;
+	typedef _thread_policy<RefObject<_alloc, _storage, _thread_policy> > ThreadPolicy;
 
 public:
     RefObject()

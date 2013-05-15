@@ -21,7 +21,7 @@
 
 #include "RfRunnableService.h"
 #include "Object/Singleton.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include <boost/type_traits.hpp>
 #include <list>
 #include <algorithm>
@@ -30,7 +30,7 @@
 class RfServiceManager : public RfRunnableService, public Singleton<RfServiceManager, SingleThread, TlsSingletonStorage>
 {
 public:
-	typedef std::list<RfServicePtr, std_alloc<RfServicePtr> > RfServiceList;
+	typedef std::list<RfServicePtr, stl_alloc<RfServicePtr>::type> RfServiceList;
 
 public:
 	RfServiceManager(long period = 100);

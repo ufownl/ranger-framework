@@ -21,7 +21,7 @@
 
 #include "Object/Singleton.h"
 #include "Container/associate_vector.h"
-#include "Memory/std_tcmalloc_allocator.h"
+#include "Memory/STLAllocator.h"
 #include <stdexcept>
 #include <utility>
 
@@ -29,7 +29,12 @@ template <class _id_type, class _creator>
 class DefaultFactoryStorage
 {
 private:
-	typedef associate_vector<_id_type, _creator, std::less<_id_type>, std_alloc<std::pair<_id_type, _creator> > > CallbackMap;
+	typedef associate_vector<
+		_id_type,
+		_creator,
+		std::less<_id_type>,
+		typename stl_alloc<std::pair<_id_type, _creator> >::type
+	> CallbackMap;
 
 public:
 	bool insert(const _id_type& id, _creator creator)
