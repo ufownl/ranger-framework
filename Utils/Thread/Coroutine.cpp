@@ -32,6 +32,9 @@ ThreadLocalStorage<Coroutine::CallStack> Coroutine::msCallStack(release_callstac
 Coroutine::Coroutine(const boost::function<void()>& func, size_t stackSize /* = 0 */)
 	: mFunc(func)
 	, mParams(0)
+#if !defined(_WIN32) && !defined(_WIN64)
+	, mStack(0)
+#endif  // !_WIN32 && !_WIN64
 {
 #if defined(_WIN32) || defined(_WIN64)
 	__declspec(thread) static Instance root = {0, eRUNNING, 0, 0};
