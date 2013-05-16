@@ -29,12 +29,9 @@ ThreadLocalStorage<Coroutine::CallStack> Coroutine::msCallStack(release_callstac
 
 #endif  // !_WIN32 && !_WIN64
 
-Coroutine::Coroutine(const boost::function<void()> &func, size_t stackSize /* = 0 */, alloc_func alloc /* = malloc */, dealloc_func dealloc /* = free */)
+Coroutine::Coroutine(const boost::function<void()> & func, size_t stackSize /* = 0 */)
 	: mFunc(func)
 	, mParams(0)
-#if !defined(_WIN32) && !defined(_WIN64)
-    , mDealloc(dealloc)
-#endif  // !_WIN32 && !_WIN64
 {
 #if defined(_WIN32) || defined(_WIN64)
 	__declspec(thread) static Instance root = {0, eRUNNING, 0, 0};
@@ -53,15 +50,17 @@ Coroutine::Coroutine(const boost::function<void()> &func, size_t stackSize /* = 
 #if defined(_WIN32) || defined(_WIN64)
 	mInst.parent = 0;
 #else
-    assert(alloc);
-    assert(dealloc);
 
     if (stackSize == 0)
     {
         stackSize = 1024 * 1024;
     }
 
-    mStack = static_cast<char*>(alloc(stackSize));
+#ifdef _DEBUG
+    mStack = static_cast<char*>(Coroutine_Alloc::getSingleton().allocate(stackSize, __FILE__, __LINE__));
+#else
+    mStack = static_cast<char*>(Coroutine_Alloc::getSingleton().allocate(stackSize));
+#endif  // _DEBUG
     if (!mStack) throw std::bad_alloc();
 
     getcontext(&mInst.context);
@@ -80,18 +79,18 @@ Coroutine::~Coroutine()
 		DeleteFiber(mInst.fiber);
 	}
 #else
-    mDealloc(mStack);
+    Coroutine_Alloc::getSingleton().deallocate(mStack);
 #endif  // _WIN32 || _WIN64
 }
 
 template <>
-void Coroutine::resume<void>()
+const void Coroutine::resume<void>()
 {
     resume_impl();
 }
 
 template <>
-void Coroutine::yield<void>()
+const void Coroutine::yield<void>()
 {
     yield_impl(getCurrentInstance());
 }
@@ -102,9 +101,9 @@ Coroutine::State Coroutine::status()
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-void Coroutine::common_fiber_func(void *ctx)
+void Coroutine::common_fiber_func(void* ctx)
 {
-	Instance *inst = static_cast<Instance*>(ctx);
+	Instance* inst = static_cast<Instance*>(ctx);
 
 	inst->self->mFunc();
 	inst->state = eDEAD;
@@ -117,7 +116,7 @@ void Coroutine::common_fiber_func(void *ctx)
 #else
 void Coroutine::common_context_func()
 {
-    Instance *inst = getCurrentInstance();
+    Instance* inst = getCurrentInstance();
 
     inst->self->mFunc();
     inst->state = eDEAD;
@@ -136,7 +135,7 @@ Coroutine::Instance* Coroutine::getCurrentInstance()
 #endif  // _WIN32 || _WIN64
 }
 
-void Coroutine::yield_impl(Instance *inst)
+void Coroutine::yield_impl(Instance* inst)
 {
 #if defined(_WIN32) || defined(_WIN64)
 	if (inst->parent && inst->parent->fiber)

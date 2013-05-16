@@ -25,7 +25,7 @@ void producer()
 {
 	for (int i = 0; i < N; ++i)
 	{
-		Coroutine::yield<void, int>(i);
+		Coroutine::yield<void>(i);
 	}
 }
 
@@ -36,7 +36,7 @@ void filter(CoroutinePtr co)
 	for (int i = co->resume<int>(); co->status() != Coroutine::eDEAD; i = co->resume<int>())
 	{
 		CPPUNIT_ASSERT_EQUAL(x, i);
-		Coroutine::yield<void, int>(x++);
+		Coroutine::yield<void>(x++);
 	}
 }
 

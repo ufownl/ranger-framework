@@ -23,7 +23,7 @@ void permgen(int *a, size_t n)
 {
 	if (n == 0)
 	{
-		Coroutine::yield<void, int*>(a);
+		Coroutine::yield<void>(a);
 	}
 	else
 	{
@@ -64,7 +64,7 @@ const char* receive(Coroutine *co)
 
 void send(const char *line)
 {
-	Coroutine::yield<void, const char*>(line);
+	Coroutine::yield<void>(line);
 }
 
 void producer()
