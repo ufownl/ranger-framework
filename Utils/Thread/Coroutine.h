@@ -27,9 +27,6 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/or.hpp>
-#include <boost/mpl/identity.hpp>
 #if !defined(_WIN32) && !defined(_WIN64)
 #include <stack>
 #ifndef _XOPEN_SOURCE
@@ -52,58 +49,38 @@ public:
 		eSUSPENDED, eRUNNING, eDEAD
 	};
 
-	template <class T>
-	struct param_type
-		: boost::mpl::eval_if<
-			boost::mpl::or_<
-				boost::is_scalar<T>,
-				boost::is_void<T>,
-				boost::is_stateless<T>,
-				boost::is_reference<T>
-			>,
-			boost::mpl::identity<T>,
-			boost::add_reference<const T>
-		>
-	{
-	};
-
 	typedef std::stack<Coroutine*> CallStack;
 
-	typedef void* (*alloc_func)(size_t);
-	typedef void (*dealloc_func)(void*);
-
 public:
-	Coroutine(const boost::function<void()> &func, size_t stackSize = 0, alloc_func alloc = malloc, dealloc_func dealloc = free);
+	Coroutine(const boost::function<void()> & func, size_t stackSize = 0);
 	virtual ~Coroutine();
 
 	template <class R>
-	typename param_type<R>::type resume()
+	typename boost::add_reference<const R>::type resume()
 	{
 		resume_impl();
-		return *static_cast<typename boost::add_pointer<typename boost::remove_reference<R>::type>::type>(mParams);
+		return *static_cast<const R*>(mParams);
 	}
 
 	template <class R, class T>
-	typename param_type<R>::type resume(typename param_type<T>::type ctx)
+	typename boost::add_reference<const R>::type resume(const T& ctx)
 	{
-		mParams = static_cast<void*>(
-			const_cast<typename boost::add_pointer<typename boost::remove_reference<T>::type>::type>(&ctx));
+		mParams = &ctx;
 		return resume<R>();
 	}
 
 	template <class R>
-	static typename param_type<R>::type yield() {
-		Instance *inst = getCurrentInstance();
+	static typename boost::add_reference<const R>::type yield() {
+		Instance* inst = getCurrentInstance();
 
 		yield_impl(inst);
-		return *static_cast<typename boost::add_pointer<typename boost::remove_reference<R>::type>::type>(inst->self->mParams);
+		return *static_cast<const R*>(inst->self->mParams);
 	}
 
 	template <class R, class T>
-	static typename param_type<R>::type yield(typename param_type<T>::type ctx)
+	static typename boost::add_reference<const R>::type yield(const T& ctx)
 	{
-		getCurrentInstance()->self->mParams = static_cast<void*>(
-			const_cast<typename boost::add_pointer<typename boost::remove_reference<T>::type>::type>(&ctx));
+		getCurrentInstance()->self->mParams = &ctx;
 		return yield<R>();
 	}
 
@@ -113,12 +90,12 @@ private:
 	struct Instance
 	{
 #if defined(_WIN32) || defined(_WIN64)
-		void *fiber;
+		void* fiber;
 #endif  // _WIN32 || _WIN64
 		State state;
-		Coroutine *self;
+		Coroutine* self;
 #if defined(_WIN32) || defined(_WIN64)
-		Instance *parent;
+		Instance* parent;
 #else
         ucontext_t context;
         ucontext_t parent;
@@ -127,29 +104,28 @@ private:
 
 private:
 #if defined(_WIN32) || defined(_WIN64)
-	static void __stdcall common_fiber_func(void *ctx);
+	static void __stdcall common_fiber_func(void* ctx);
 #else
     static void common_context_func();
 #endif  // _WIN32 || _WIN64
 	static Instance* getCurrentInstance();
-	static void yield_impl(Instance *inst);
+	static void yield_impl(Instance* inst);
 
 	void resume_impl();
 
 private:
 	boost::function<void()> mFunc;
 	Instance mInst;
-	void *mParams;
+	const void* mParams;
 #if !defined(_WIN32) && !defined(_WIN64)
-    dealloc_func mDealloc;
-    char *mStack;
+    char* mStack;
 
 	static ThreadLocalStorage<CallStack> msCallStack;
 #endif  // !_WIN32 && !_WIN64
 };
 
-template <> void Coroutine::resume<void>();
-template <> void Coroutine::yield<void>();
+template <> const void Coroutine::resume<void>();
+template <> const void Coroutine::yield<void>();
 
 DeclareSmartPointer(Coroutine);
 
