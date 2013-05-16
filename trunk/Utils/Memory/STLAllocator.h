@@ -70,12 +70,12 @@ public:
 
 	pointer address(reference val) const
 	{
-		return (&val);
+		return &val;
 	}
 
 	const_pointer address(const_reference val) const
 	{
-		return (&val);
+		return &val;
 	}
 
 	void deallocate(pointer p, size_type count)
@@ -101,14 +101,14 @@ public:
 		return p;
 	}
 
-	void construct(pointer ptr, const T &val)
+	void construct(pointer p, const T &val)
 	{
-		::new(ptr) T(val);
+		::new(p) T(val);
 	}
 
-	void destroy(pointer ptr)
+	void destroy(pointer p)
 	{
-		ptr->~T();
+		p->~T();
 	}
 
 	size_type max_size() const
