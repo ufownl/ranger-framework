@@ -79,7 +79,10 @@ Coroutine::~Coroutine()
 		DeleteFiber(mInst.fiber);
 	}
 #else
-    Coroutine_Alloc::getSingleton().deallocate(mStack);
+	if (mStack)
+	{
+		Coroutine_Alloc::getSingleton().deallocate(mStack);
+	}
 #endif  // _WIN32 || _WIN64
 }
 
