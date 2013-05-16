@@ -49,7 +49,9 @@ public:
 		eSUSPENDED, eRUNNING, eDEAD
 	};
 
+#if !defined(_WIN32) && !defined(_WIN64)
 	typedef std::stack<Coroutine*> CallStack;
+#endif  // !_WIN32 && !_WIN64
 
 public:
 	Coroutine(const boost::function<void()>& func, size_t stackSize = 0);
