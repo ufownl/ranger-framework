@@ -52,7 +52,7 @@ public:
 	typedef std::stack<Coroutine*> CallStack;
 
 public:
-	Coroutine(const boost::function<void()> & func, size_t stackSize = 0);
+	Coroutine(const boost::function<void()>& func, size_t stackSize = 0);
 	virtual ~Coroutine();
 
 	template <class R>
@@ -70,7 +70,8 @@ public:
 	}
 
 	template <class R>
-	static typename boost::add_reference<const R>::type yield() {
+	static typename boost::add_reference<const R>::type yield()
+	{
 		Instance* inst = getCurrentInstance();
 
 		yield_impl(inst);

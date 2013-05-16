@@ -29,7 +29,7 @@ ThreadLocalStorage<Coroutine::CallStack> Coroutine::msCallStack(release_callstac
 
 #endif  // !_WIN32 && !_WIN64
 
-Coroutine::Coroutine(const boost::function<void()> & func, size_t stackSize /* = 0 */)
+Coroutine::Coroutine(const boost::function<void()>& func, size_t stackSize /* = 0 */)
 	: mFunc(func)
 	, mParams(0)
 {
