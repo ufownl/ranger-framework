@@ -22,7 +22,7 @@
 #include "RfAction.h"
 #include "Memory/STLAllocator.h"
 #include "Object/ObjectPool.h"
-#include <queue>
+#include "Container/round_robin_queue.h"
 
 class RfActionHandler : public RfService
 {
@@ -52,9 +52,9 @@ private:
 	};
 
 	typedef ObjectPool<action_wrapper_t, ::SingleThread> RfActionPool;
-	typedef std::queue<
+	typedef round_robin_queue<
 		RfActionPtr,
-		std::deque<RfActionPtr, stl_alloc<RfActionPtr>::type>
+		std::vector<RfActionPtr, stl_alloc<RfActionPtr>::type>
 	> RfActionTickQueue;
 
 	RfActionPool mActPool;

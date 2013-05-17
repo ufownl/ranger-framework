@@ -28,41 +28,82 @@ class MemObject
 {
 public:
 #ifdef _DEBUG
-
     static void* operator new (size_t size, const char* file, long line)
+#else
+    static void* operator new (size_t size)
+#endif  // _DEBUG
 	{
 		if (!size)
 		{
 			size = 1;
 		}
 
-		void* p = _alloc::getSingleton().allocate(size, file, line);
-
-		if (!p)
+		while (true)
 		{
-			throw std::bad_alloc();
-		}
+#ifdef _DEBUG
+			void* p = _alloc::getSingleton().allocate(size, file, line);
+#else
+			void* p = _alloc::getSingleton().allocate(size);
+#endif // _DEBUG
 
-		return p;
+			if (p)
+			{
+				return p;
+			}
+
+			std::new_handler handler = std::set_new_handler(0);
+			std::set_new_handler(handler);
+
+			if (handler)
+			{
+				handler();
+			}
+			else
+			{
+				throw std::bad_alloc();
+			}
+		}
 	}
 
+#ifdef _DEBUG
     static void* operator new[] (size_t size, const char* file, long line)
+#else
+    static void* operator new[] (size_t size)
+#endif  // _DEBUG
 	{
 		if (!size)
 		{
 			size = 1;
 		}
 
-		void* p = _alloc::getSingleton().allocate(size, file, line);
-
-		if (!p)
+		while (true)
 		{
-			throw std::bad_alloc();
-		}
+#ifdef _DEBUG
+			void* p = _alloc::getSingleton().allocate(size, file, line);
+#else
+			void* p = _alloc::getSingleton().allocate(size);
+#endif // _DEBUG
 
-		return p;
+			if (p)
+			{
+				return p;
+			}
+
+			std::new_handler handler = std::set_new_handler(0);
+			std::set_new_handler(handler);
+
+			if (handler)
+			{
+				handler();
+			}
+			else
+			{
+				throw std::bad_alloc();
+			}
+		}
 	}
 
+#ifdef _DEBUG
     static void operator delete (void* p, const char*, long)
 	{
 		if (p)
@@ -71,50 +112,13 @@ public:
 		}
 	}
 
-    static void operator delete[] (void *p, const char*, long)
+    static void operator delete[] (void* p, const char*, long)
 	{
 		if (p)
 		{
 			_alloc::getSingleton().deallocate(p);
 		}
 	}
-
-#else
-
-    static void* operator new (size_t size)
-	{
-		if (!size)
-		{
-			size = 1;
-		}
-
-		void* p = _alloc::getSingleton().allocate(size);
-
-		if (!p)
-		{
-			throw std::bad_alloc();
-		}
-
-		return p;
-	}
-
-    static void* operator new[] (size_t size)
-	{
-		if (!size)
-		{
-			size = 1;
-		}
-
-		void* p = _alloc::getSingleton().allocate(size);
-
-		if (!p)
-		{
-			throw std::bad_alloc();
-		}
-
-		return p;
-	}
-
 #endif  // _DEBUG
 
     static void operator delete (void* p, size_t size)
@@ -125,7 +129,7 @@ public:
 		}
 	}
 
-    static void operator delete[] (void *p, size_t size)
+    static void operator delete[] (void* p, size_t size)
 	{
 		if (p)
 		{
