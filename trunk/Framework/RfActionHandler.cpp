@@ -20,6 +20,7 @@
 
 RfActionHandler::RfActionHandler(size_t maxSize /* = 0x10000 */)
 	: mActPool(maxSize, 0, &action_wrapper_t::onDeallocate)
+	, mActTick(maxSize * 2)
 {
 }
 
@@ -58,9 +59,8 @@ bool RfActionHandler::onTick(long escape)
 
 	for (size_t i = 0; i < cnt; ++i)
 	{
-		RfAction* action = mActTick.front();
-
-		action->tick();
+		mActTick.front()->tick();
+		mActTick.front() = 0;
 		mActTick.pop();
 	}
 
