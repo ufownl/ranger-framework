@@ -16,7 +16,7 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cppunit/extensions/HelperMacros.h"
+#include <cppunit/extensions/HelperMacros.h>
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "Thread/ThreadLocalStorage.h"
 #endif  // !_WIN32 && !_WIN64
