@@ -21,8 +21,6 @@
 #include <limits>
 #include <tcmalloc.h>
 
-TCMallocAllocator gTCMallocAllocator;
-
 #ifdef _DEBUG
 
 void* TCMallocAllocator::allocate(size_t size, const char* file, long line)

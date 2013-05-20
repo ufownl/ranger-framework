@@ -22,7 +22,7 @@
 #include "Object/Singleton.h"
 #include <stddef.h>
 
-class Allocator : public Singleton<Allocator>
+class Allocator
 {
 public:
 #ifdef _DEBUG

@@ -60,9 +60,9 @@ Coroutine::Coroutine(const boost::function<void()>& func, size_t stackSize /* = 
     }
 
 #ifdef _DEBUG
-    mStack = static_cast<char*>(Coroutine_Alloc::getSingleton().allocate(stackSize, __FILE__, __LINE__));
+    mStack = static_cast<char*>(Coroutine_Alloc::allocate(stackSize, __FILE__, __LINE__));
 #else
-    mStack = static_cast<char*>(Coroutine_Alloc::getSingleton().allocate(stackSize));
+    mStack = static_cast<char*>(Coroutine_Alloc::allocate(stackSize));
 #endif  // _DEBUG
     if (!mStack) throw std::bad_alloc();
 
@@ -84,7 +84,7 @@ Coroutine::~Coroutine()
 #else
 	if (mStack)
 	{
-		Coroutine_Alloc::getSingleton().deallocate(mStack);
+		Coroutine_Alloc::deallocate(mStack);
 	}
 #endif  // _WIN32 || _WIN64
 }

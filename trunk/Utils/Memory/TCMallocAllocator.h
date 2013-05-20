@@ -22,7 +22,7 @@
 #include "Object/Singleton.h"
 #include <stddef.h>
 
-class TCMallocAllocator : public Singleton<TCMallocAllocator>
+class TCMallocAllocator
 {
 public:
 #ifdef _DEBUG

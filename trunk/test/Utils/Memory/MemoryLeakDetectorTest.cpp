@@ -56,7 +56,7 @@ private:
 
 		for (size_t i = 0; i < N; ++i)
 		{
-			p[i] = Test_Alloc::getSingleton().allocate(1, __FILE__, __LINE__);
+			p[i] = Test_Alloc::allocate(1, __FILE__, __LINE__);
 			MemoryLeakDetector::getSingleton().checkMemoryState(state);
 			CPPUNIT_ASSERT_EQUAL(init + i + 1, state.size());
 		}
@@ -75,7 +75,7 @@ private:
 
 		for (size_t i = 0; i < N; ++i)
 		{
-			Test_Alloc::getSingleton().deallocate(p[i]);
+			Test_Alloc::deallocate(p[i]);
 			MemoryLeakDetector::getSingleton().checkMemoryState(state);
 			CPPUNIT_ASSERT_EQUAL(init + N - i - 1, state.size());
 		}

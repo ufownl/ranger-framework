@@ -41,9 +41,9 @@ public:
 		while (true)
 		{
 #ifdef _DEBUG
-			void* p = _alloc::getSingleton().allocate(size, file, line);
+			void* p = _alloc::allocate(size, file, line);
 #else
-			void* p = _alloc::getSingleton().allocate(size);
+			void* p = _alloc::allocate(size);
 #endif // _DEBUG
 
 			if (p)
@@ -79,9 +79,9 @@ public:
 		while (true)
 		{
 #ifdef _DEBUG
-			void* p = _alloc::getSingleton().allocate(size, file, line);
+			void* p = _alloc::allocate(size, file, line);
 #else
-			void* p = _alloc::getSingleton().allocate(size);
+			void* p = _alloc::allocate(size);
 #endif // _DEBUG
 
 			if (p)
@@ -108,7 +108,7 @@ public:
 	{
 		if (p)
 		{
-			_alloc::getSingleton().deallocate(p);
+			_alloc::deallocate(p);
 		}
 	}
 
@@ -116,7 +116,7 @@ public:
 	{
 		if (p)
 		{
-			_alloc::getSingleton().deallocate(p);
+			_alloc::deallocate(p);
 		}
 	}
 #endif  // _DEBUG
@@ -125,7 +125,7 @@ public:
 	{
 		if (p)
 		{
-			_alloc::getSingleton().deallocate(p, size);
+			_alloc::deallocate(p, size);
 		}
 	}
 
@@ -133,7 +133,7 @@ public:
 	{
 		if (p)
 		{
-			_alloc::getSingleton().deallocate(p, size);
+			_alloc::deallocate(p, size);
 		}
 	}
 };
