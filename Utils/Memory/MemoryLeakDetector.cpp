@@ -19,7 +19,7 @@
 #include "Memory/MemoryLeakDetector.h"
 #include <stdio.h>
 
-MemoryLeakDetector gMemoryLeakDetector;
+static MemoryLeakDetector gsMemoryLeakDetector;
 
 MemoryLeakDetector::MemoryLeakDetector()
 	: mStateProxy(&mState)
