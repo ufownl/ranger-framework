@@ -21,8 +21,6 @@
 #include <limits>
 #include <stdlib.h>
 
-static Allocator gsAllocator;
-
 #ifdef _DEBUG
 
 void* Allocator::allocate(size_t size, const char* file, long line)

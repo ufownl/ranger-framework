@@ -80,7 +80,7 @@ public:
 
 	void deallocate(pointer p, size_type count)
 	{
-		_alloc::getSingleton().deallocate(p, count * sizeof(T));
+		_alloc::deallocate(p, count * sizeof(T));
 	}
 
 	pointer allocate(size_type count, const void* hint = 0)
@@ -88,9 +88,9 @@ public:
 		pointer p = 0;
 		
 #ifdef _DEBUG
-		p = static_cast<pointer>(_alloc::getSingleton().allocate(count * sizeof(T), __FILE__, __LINE__));
+		p = static_cast<pointer>(_alloc::allocate(count * sizeof(T), __FILE__, __LINE__));
 #else
-		p = static_cast<pointer>(_alloc::getSingleton().allocate(count * sizeof(T)));
+		p = static_cast<pointer>(_alloc::allocate(count * sizeof(T)));
 #endif  // _DEBUG
 
 		if (!p)
@@ -113,7 +113,7 @@ public:
 
 	size_type max_size() const
 	{
-		return _alloc::getSingleton().max_size();
+		return _alloc::max_size();
 	}
 };
 
