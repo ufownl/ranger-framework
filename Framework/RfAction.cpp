@@ -52,6 +52,7 @@ bool RfAction::execute()
 
 		mIsActive = true;
 		tick();
+		shutdown();
 	}
 
 	return true;

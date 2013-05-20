@@ -39,7 +39,19 @@ public:
 	}
 
 protected:
-	bool onTick(long escape)
+	virtual bool onInitialize()
+	{
+		if (!RfRequestService::onInitialize())
+		{
+			return false;
+		}
+
+		std::cout << "MyResponseService::onInitialized" << std::endl;
+
+		return true;
+	}
+
+	virtual bool onTick(long escape)
 	{
 		if (!RfRequestService::onTick(escape))
 		{
@@ -59,6 +71,11 @@ protected:
 		std::cout << gCount << std::endl;
 
 		return true;
+	}
+
+	virtual void onShutdown()
+	{
+		std::cout << "MyResponseService::onShutdown" << std::endl;
 	}
 
 private:
@@ -112,7 +129,7 @@ public:
 	}
 
 protected:
-	bool onInitialize()
+	virtual bool onInitialize()
 	{
 		if (!RfRequestService::onInitialize())
 		{
@@ -122,10 +139,12 @@ protected:
 		mService = RfServiceManager::getSingleton().get<MyResponseService>();
 		assert(mService);
 
+		std::cout << "MyRequestService::onInitialized" << std::endl;
+
 		return true;
 	}
 
-	bool onTick(long escape)
+	virtual bool onTick(long escape)
 	{
 		if (!RfRequestService::onTick(escape))
 		{
@@ -146,6 +165,11 @@ protected:
 		}
 
 		return true;
+	}
+
+	virtual void onShutdown()
+	{
+		std::cout << "MyRequestService::onShutdown" << std::endl;
 	}
 
 private:
