@@ -16,9 +16,9 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cppunit/extensions/HelperMacros.h"
-#include "Thread/ThreadPolicy.h"
+#include <cppunit/extensions/HelperMacros.h>
 #include <boost/type_traits.hpp>
+#include "Thread/ThreadPolicy.h"
 
 template <class T>
 struct ClassLevel : public ClassLevelLockable<ClassLevel<T> >
