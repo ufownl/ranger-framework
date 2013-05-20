@@ -74,6 +74,10 @@ bool RfServiceManager::onTick(long escape)
 
 void RfServiceManager::onShutdown()
 {
+	for (RfServiceList::iterator i = mServices.begin(); i != mServices.end(); ++i)
+	{
+		(*i)->shutdown();
+	}
 	mServices.clear();
 	RfRunnableService::onShutdown();
 }

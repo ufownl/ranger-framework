@@ -51,7 +51,7 @@ void RfRunnableService::run()
 		}
 	}
 
-	onShutdown();
+	shutdown();
 }
 
 void RfRunnableService::stop()

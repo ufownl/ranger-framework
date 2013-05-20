@@ -28,10 +28,6 @@ RfService::RfService()
 
 RfService::~RfService()
 {
-	if (mIsInitialized)
-	{
-		onShutdown();
-	}
 }
 
 bool RfService::tick()
@@ -51,6 +47,14 @@ bool RfService::tick()
 	mTick = (clock() - t) * 1000 / CLOCKS_PER_SEC;
 
 	return ret;
+}
+
+void RfService::shutdown()
+{
+	if (mIsInitialized)
+	{
+		onShutdown();
+	}
 }
 
 bool RfService::onInitialize()

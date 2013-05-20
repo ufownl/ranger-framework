@@ -36,6 +36,7 @@ public:
 	virtual ~RfService();
 
 	bool tick();
+	void shutdown();
 
 protected:
 	virtual bool onInitialize();
