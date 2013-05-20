@@ -68,7 +68,9 @@ public:
 private:
 	void test()
 	{
+#ifndef __APPLE__
 		consumer(RfNew Coroutine(boost::bind(filter, RfNew Coroutine(producer))));
+#endif  // !__APPLE__
 	}
 };
 
