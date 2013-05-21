@@ -27,15 +27,11 @@ public:
     SmartPointer(const SmartPointer &ptr);
     ~SmartPointer();
 
-    operator T* ();
-    operator const T* () const;
-    T* data();
-    const T* data() const;
+    operator T* () const;
+    T* data() const;
 
-    T& operator * ();
-    const T& operator * () const;
-    T* operator -> ();
-    const T* operator -> () const;
+    T& operator * () const;
+    T* operator -> () const;
 
     SmartPointer<T>& operator = (const SmartPointer<T> &ptr);
     SmartPointer<T>& operator = (T *object);
@@ -86,49 +82,25 @@ SmartPointer<T>::~SmartPointer()
 }
 
 template <class T>
-SmartPointer<T>::operator T* ()
+SmartPointer<T>::operator T* () const
 {
     return mObject;
 }
 
 template <class T>
-SmartPointer<T>::operator const T* () const
+T* SmartPointer<T>::data() const
 {
     return mObject;
 }
 
 template <class T>
-T* SmartPointer<T>::data()
-{
-    return mObject;
-}
-
-template <class T>
-const T* SmartPointer<T>::data() const
-{
-    return mObject;
-}
-
-template <class T>
-T& SmartPointer<T>::operator * ()
+T& SmartPointer<T>::operator * () const
 {
     return *mObject;
 }
 
 template <class T>
-const T& SmartPointer<T>::operator * () const
-{
-    return *mObject;
-}
-
-template <class T>
-T* SmartPointer<T>::operator -> ()
-{
-    return mObject;
-}
-
-template <class T>
-const T* SmartPointer<T>::operator -> () const
+T* SmartPointer<T>::operator -> () const
 {
     return mObject;
 }
