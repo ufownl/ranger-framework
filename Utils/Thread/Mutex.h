@@ -19,13 +19,14 @@
 #ifndef __Utils_Thread_Mutex_H__
 #define __Utils_Thread_Mutex_H__
 
+#include <boost/noncopyable.hpp>
 #if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
 #else
 #include <pthread.h>
 #endif  // _WIN32 || _WIN64
 
-class Mutex
+class Mutex : private boost::noncopyable
 {
 public:
     Mutex();
@@ -33,10 +34,6 @@ public:
 
     void lock();
     void unlock();
-
-private:
-    Mutex(const Mutex&);
-    Mutex& operator = (Mutex&);
 
 private:
 #if defined(_WIN32) || defined(_WIN64)

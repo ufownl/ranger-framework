@@ -23,7 +23,7 @@
 #include <assert.h>
 
 template <class _ptr, class _lock = Mutex>
-class MutexCaller
+class MutexCaller : private boost::noncopyable
 {
 private:
     class Proxy
@@ -66,10 +66,6 @@ public:
     {
         return mLock;
     }
-
-private:
-    MutexCaller(const MutexCaller&);
-    MutexCaller& operator = (MutexCaller&);
 
 private:
     _ptr mInstance;
