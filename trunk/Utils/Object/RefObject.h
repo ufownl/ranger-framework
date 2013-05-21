@@ -31,6 +31,7 @@ template <
 class RefObject
 	: public MemObject<_alloc>
 	, public _thread_policy<RefObject<_alloc, _storage, _thread_policy> >
+	, private boost::noncopyable
 {
 public:
 	typedef _thread_policy<RefObject<_alloc, _storage, _thread_policy> > ThreadPolicy;
@@ -70,10 +71,6 @@ public:
 	{
 		return mRefCount;
 	}
-
-private:
-    RefObject(const RefObject&);
-    RefObject& operator = (const RefObject&);
 
 private:
 	typename ThreadPolicy::template Data<_storage>::type mRefCount;

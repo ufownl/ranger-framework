@@ -19,6 +19,7 @@
 #ifndef __Utils_Container_instrusive_list_H__
 #define __Utils_Container_instrusive_list_H__
 
+#include <boost/noncopyable.hpp>
 #include <iterator>
 #include <limits>
 #include <stddef.h>
@@ -128,7 +129,7 @@ struct instrusive_list_iterator : std::iterator<std::bidirectional_iterator_tag,
 };
 
 template <class _node>
-class instrusive_list
+class instrusive_list : private boost::noncopyable
 {
 public:
 	typedef _node value_type;
