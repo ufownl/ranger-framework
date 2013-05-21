@@ -80,7 +80,10 @@ public:
 
 	void deallocate(pointer p, size_type count)
 	{
-		_alloc::deallocate(p, count * sizeof(T));
+		if (p)
+		{
+			_alloc::deallocate(p, count * sizeof(T));
+		}
 	}
 
 	pointer allocate(size_type count, const void* hint = 0)
