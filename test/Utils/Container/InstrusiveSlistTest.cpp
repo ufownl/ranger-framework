@@ -18,16 +18,16 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <algorithm>
-#include "Container/instrusive_list.h"
+#include "Container/instrusive_slist.h"
 
-struct Mock : public instrusive_list_node<Mock>
+struct Mock : public instrusive_slist_node<Mock>
 {
 	size_t value;
 };
 
-class InstrusiveListTest : public CppUnit::TestFixture
+class InstrusiveSlistTest : public CppUnit::TestFixture
 {
-	CPPUNIT_TEST_SUITE(InstrusiveListTest);
+	CPPUNIT_TEST_SUITE(InstrusiveSlistTest);
 	CPPUNIT_TEST(test);
 	CPPUNIT_TEST_SUITE_END();
 
@@ -38,7 +38,6 @@ public:
 		{
 			mMocks[i].value = i;
 			mMocks[i].next() = 0;
-			mMocks[i].prev() = 0;
 		}
 	}
 
@@ -54,66 +53,73 @@ private:
 
 	void test()
 	{
-		instrusive_list<Mock> l;
+		instrusive_slist<Mock> l;
 
 		CPPUNIT_ASSERT(l.empty());
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), l.size());
 
-		std::copy(mMocks, mMocks + 10, std::back_inserter(l));
+		std::copy(mMocks, mMocks + 10, std::front_inserter(l));
 
 		CPPUNIT_ASSERT(!l.empty());
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), l.size());
 		
-		size_t idx = 0;
+		size_t idx = 9;
 
-		for (instrusive_list<Mock>::iterator i = l.begin(); i != l.end(); ++i)
+		for (instrusive_slist<Mock>::iterator i = l.begin(); i != l.end(); ++i)
 		{
-			CPPUNIT_ASSERT_EQUAL(mMocks[idx++].value, i->value);
+			CPPUNIT_ASSERT_EQUAL(mMocks[idx--].value, i->value);
 		}
 
 		l.push_front(mMocks[10]);
-		l.push_back(mMocks[11]);
-		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(12), l.size());
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(11), l.size());
 		CPPUNIT_ASSERT_EQUAL(mMocks[10].value, l.front().value);
-		CPPUNIT_ASSERT_EQUAL(mMocks[11].value, l.back().value);
 
-		instrusive_list<Mock>::iterator it = l.begin();
+		instrusive_slist<Mock>::iterator it = l.begin();
 
 		std::advance(it, 3);
-		l.insert(it, mMocks[12]);
+		l.insert(it, mMocks[11]);
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(12), l.size());
+		CPPUNIT_ASSERT_EQUAL(it->value, mMocks[11].next()->value);
+		
+		it = l.begin();
+		std::advance(it, 3);
+		l.insert_after(it, mMocks[12]);
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(13), l.size());
-		CPPUNIT_ASSERT_EQUAL(mMocks[12].value, it->prev()->value);
-		CPPUNIT_ASSERT_EQUAL(it->value, mMocks[12].next()->value);
+		CPPUNIT_ASSERT_EQUAL(mMocks[12].value, it->next()->value);
 
 		it = l.begin();
 		std::advance(it, 3);
+		l.erase_after(it);
 		l.erase(it);
 		l.pop_front();
-		l.pop_back();
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), l.size());
 
-		idx = 0;
-		for (instrusive_list<Mock>::iterator i = l.begin(); i != l.end(); ++i)
+		idx = 9;
+		for (instrusive_slist<Mock>::iterator i = l.begin(); i != l.end(); ++i)
 		{
-			CPPUNIT_ASSERT_EQUAL(mMocks[idx++].value, i->value);
+			CPPUNIT_ASSERT_EQUAL(mMocks[idx--].value, i->value);
 		}
 
 		l.remove(mMocks[5]);
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(9), l.size());
-		CPPUNIT_ASSERT_EQUAL(mMocks[6].value, mMocks[4].next()->value);
+		CPPUNIT_ASSERT_EQUAL(mMocks[4].value, mMocks[6].next()->value);
+
+		l.remove_after(mMocks[6]);
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(8), l.size());
+		CPPUNIT_ASSERT_EQUAL(mMocks[3].value, mMocks[6].next()->value);
 
 		it = l.begin();
 		std::advance(it, 3);
 		
-		instrusive_list<Mock>::iterator it0 = it;
+		instrusive_slist<Mock>::iterator it0 = it;
 
 		std::advance(it, 3);
 		l.erase(it0, it);
-		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(6), l.size());
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(5), l.size());
 
-		l.remove_if(&InstrusiveListTest::predicate);
+		l.remove_if(&InstrusiveSlistTest::predicate);
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(2), l.size());
-		for (instrusive_list<Mock>::iterator i = l.begin(); i != l.end(); ++i)
+		for (instrusive_slist<Mock>::iterator i = l.begin(); i != l.end(); ++i)
 		{
 			CPPUNIT_ASSERT(i->value >= 8);
 		}
@@ -127,4 +133,4 @@ private:
 	Mock mMocks[15];
 };
 
-CPPUNIT_TEST_SUITE_REGISTRATION(InstrusiveListTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(InstrusiveSlistTest);

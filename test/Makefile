@@ -35,7 +35,7 @@ endef
 
 all: test
 
-test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o
+test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o
 	$(ld_run)
 
 main.o: main.cpp
@@ -66,6 +66,12 @@ AssociateVectorTest.o: Utils/Container/AssociateVectorTest.cpp
 	$(cxx_run)
 
 InstrusiveListTest.o: Utils/Container/InstrusiveListTest.cpp
+	$(cxx_run)
+
+InstrusiveSlistTest.o: Utils/Container/InstrusiveSlistTest.cpp
+	$(cxx_run)
+
+RoundRobinQueueTest.o: Utils/Container/RoundRobinQueueTest.cpp
 	$(cxx_run)
 
 clean:
