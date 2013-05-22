@@ -35,7 +35,7 @@ endef
 
 all: test
 
-test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o
+test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o HierarchyGeneratorTest.o
 	$(ld_run)
 
 main.o: main.cpp
@@ -78,6 +78,9 @@ BindTest.o: Utils/MPL/BindTest.cpp
 	$(cxx_run)
 
 DummyTest.o: Utils/MPL/DummyTest.cpp
+	$(cxx_run)
+
+HierarchyGeneratorTest.o: Utils/MPL/HierarchyGeneratorTest.cpp
 	$(cxx_run)
 
 clean:
