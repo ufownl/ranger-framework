@@ -23,36 +23,81 @@ template <class T>
 class SmartPointer
 {
 public:
-    SmartPointer(T *object = (T*)0);
-    SmartPointer(const SmartPointer &ptr);
-    ~SmartPointer();
+    SmartPointer(T* object = (T*)0)
+		: mObject(object)
+	{
+		if (mObject)
+		{
+			mObject->incRefCount();
+		}
+	}
 
-    operator T* () const;
-    T* data() const;
+    SmartPointer(const SmartPointer<T>& rhs)
+		: mObject(rhs.mObject)
+	{
+		if (mObject)
+		{
+			mObject->incRefCount();
+		}
+	}
 
-    T& operator * () const;
-    T* operator -> () const;
+    ~SmartPointer()
+	{
+		if (mObject)
+		{
+			mObject->decRefCount();
+		}
+	}
 
-    SmartPointer<T>& operator = (const SmartPointer<T> &ptr);
-    SmartPointer<T>& operator = (T *object);
+    operator T* () const
+	{
+		return mObject;
+	}
 
-    bool operator == (T *object) const;
-    bool operator != (T *object) const;
-    bool operator == (const SmartPointer<T> &ptr) const;
-    bool operator != (const SmartPointer<T> &ptr) const;
-    bool operator < (T *object) const;
-    bool operator > (T *object) const;
-    bool operator < (const SmartPointer<T> &ptr) const;
-    bool operator > (const SmartPointer<T> &ptr) const;
-    bool operator <= (T *object) const;
-    bool operator >= (T *object) const;
-    bool operator <= (const SmartPointer<T> &ptr) const;
-    bool operator >= (const SmartPointer<T> &ptr) const;
+    T* data() const
+	{
+		return mObject;
+	}
 
-    void swap(SmartPointer<T> &otherPtr);
+    T& operator * () const
+	{
+		return *mObject;
+	}
+
+    T* operator -> () const
+	{
+		return mObject;
+	}
+
+    SmartPointer<T>& operator = (const SmartPointer<T>& rhs)
+	{
+		if (mObject != rhs.mObject)
+		{
+			if (mObject)
+			{
+				mObject->decRefCount();
+			}
+
+			mObject = rhs.mObject;
+
+			if (mObject)
+			{
+				mObject->incRefCount();
+			}
+		}
+
+		return *this;
+	}
+
+    void swap(SmartPointer<T>& rhs)
+	{
+		T* temp = mObject;
+		mObject = rhs.mObject;
+		rhs.mObject = temp;
+	}
 
 private:
-    T *mObject;
+    T* mObject;
 };
 
 
@@ -62,161 +107,48 @@ private:
 
 
 template <class T>
-SmartPointer<T>::SmartPointer(T *object/* = (T*)0 */)
-    : mObject(object)
+bool operator == (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    if (mObject) mObject->incRefCount();
+	return lhs.data() == rhs.data();
 }
 
 template <class T>
-SmartPointer<T>::SmartPointer(const SmartPointer &ptr)
-    : mObject(ptr.mObject)
+bool operator != (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    if (mObject) mObject->incRefCount();
+	return lhs.data() != rhs.data();
 }
 
 template <class T>
-SmartPointer<T>::~SmartPointer()
+bool operator < (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    if (mObject) mObject->decRefCount();
+	return lhs.data() < rhs.data();
 }
 
 template <class T>
-SmartPointer<T>::operator T* () const
+bool operator > (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    return mObject;
+	return lhs.data() > rhs.data();
 }
 
 template <class T>
-T* SmartPointer<T>::data() const
+bool operator <= (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    return mObject;
+	return lhs.data() <= rhs.data();
 }
 
 template <class T>
-T& SmartPointer<T>::operator * () const
+bool operator >= (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 {
-    return *mObject;
-}
-
-template <class T>
-T* SmartPointer<T>::operator -> () const
-{
-    return mObject;
-}
-
-template <class T>
-SmartPointer<T>& SmartPointer<T>::operator = (const SmartPointer<T> &ptr)
-{
-    if (mObject != ptr.mObject)
-    {
-        if (mObject) mObject->decRefCount();
-        mObject = ptr.mObject;
-        if (mObject) mObject->incRefCount();
-    }
-    return *this;
-}
-
-template <class T>
-SmartPointer<T>& SmartPointer<T>::operator = (T *object)
-{
-    if (mObject != object)
-    {
-        if (mObject) mObject->decRefCount();
-        mObject = object;
-        if (mObject) mObject->incRefCount();
-    }
-    return *this;
-}
-
-template <class T>
-bool SmartPointer<T>::operator == (T *object) const
-{
-    return mObject == object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator != (T *object) const
-{
-    return mObject != object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator == (const SmartPointer<T> &ptr) const
-{
-    return mObject == ptr.mObject;
-}
-
-template <class T>
-bool SmartPointer<T>::operator != (const SmartPointer<T> &ptr) const
-{
-    return mObject != ptr.mObject;
-}
-
-template <class T>
-bool SmartPointer<T>::operator < (T *object) const
-{
-    return mObject < object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator > (T *object) const
-{
-    return mObject > object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator < (const SmartPointer<T> &ptr) const
-{
-    return mObject < ptr.mObject;
-}
-
-template <class T>
-bool SmartPointer<T>::operator > (const SmartPointer<T> &ptr) const
-{
-    return mObject > ptr.mObject;
-}
-
-template <class T>
-bool SmartPointer<T>::operator <= (T *object) const
-{
-    return mObject <= object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator >= (T *object) const
-{
-    return mObject >= object;
-}
-
-template <class T>
-bool SmartPointer<T>::operator <= (const SmartPointer<T> &ptr) const
-{
-    return mObject <= ptr.mObject;
-}
-
-template <class T>
-bool SmartPointer<T>::operator >= (const SmartPointer<T> &ptr) const
-{
-    return mObject >= ptr.mObject;
-}
-
-template <class T>
-void SmartPointer<T>::swap(SmartPointer<T> &otherPtr)
-{
-    T* temp = mObject;
-
-    mObject = otherPtr.mObject;
-    otherPtr.mObject = temp;
+	return lhs.data() >= rhs.data();
 }
 
 namespace std
 {
 
 	template <class T>
-	void swap(SmartPointer<T>& ptr0, SmartPointer<T>& ptr1)
+	void swap(SmartPointer<T>& lhs, SmartPointer<T>& rhs)
 	{
-		ptr0.swap(ptr1);
+		lhs.swap(rhs);
 	}
 
 }
