@@ -46,7 +46,7 @@ protected:
 			return false;
 		}
 
-		std::cout << "MyResponseService::onInitialized" << std::endl;
+		std::cout << "MyResponseService::onInitialize" << std::endl;
 
 		return true;
 	}
@@ -139,7 +139,7 @@ protected:
 		mService = RfServiceManager::getSingleton().get<MyResponseService>();
 		assert(mService);
 
-		std::cout << "MyRequestService::onInitialized" << std::endl;
+		std::cout << "MyRequestService::onInitialize" << std::endl;
 
 		return true;
 	}
