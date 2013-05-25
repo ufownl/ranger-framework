@@ -215,8 +215,9 @@ public:
 
 	void swap(self& rhs)
 	{
-		mBackend.swap(rhs.mBackend);
-		std::swap(mComp, rhs.mComp);
+		using std::swap;
+		swap(mBackend, rhs.mBackend);
+		swap(mComp, rhs.mComp);
 	}
 
 	size_type count(const key_type& key)
@@ -285,15 +286,10 @@ private:
 	key_compare mComp;
 };
 
-namespace std
+template <class _key, class _val, class _comp, class _alloc>
+void swap(associate_vector<_key, _val, _comp, _alloc>& lhs, associate_vector<_key, _val, _comp, _alloc>& rhs)
 {
-
-	template <class _key, class _val, class _comp, class _alloc>
-	void swap(associate_vector<_key, _val, _comp, _alloc>& av0, associate_vector<_key, _val, _comp, _alloc>& av1)
-	{
-		av0.swap(av1);
-	}
-
+	lhs.swap(rhs);
 }
 
 #endif  // __Utils_Container_associate_vector_H__

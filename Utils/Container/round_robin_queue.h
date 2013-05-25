@@ -20,6 +20,7 @@
 #define __Utils_Container_round_robin_queue_H__
 
 #include <vector>
+#include <algorithm>
 #include <stddef.h>
 
 template <class T, class _container = std::vector<T> >
@@ -125,11 +126,26 @@ public:
 		}
 	}
 
+	void swap(round_robin_queue<T, _container>& rhs)
+	{
+		using std::swap;
+		swap(mContainer, rhs.mContainer);
+		swap(mFront, rhs.mFront);
+		swap(mBack, rhs.mBack);
+		swap(mSize, rhs.mSize);
+	}
+
 private:
 	container_type mContainer;
 	ptrdiff_t mFront;
 	ptrdiff_t mBack;
 	size_type mSize;
 };
+
+template <class T, class _container>
+void swap(round_robin_queue<T, _container>& lhs, round_robin_queue<T, _container>& rhs)
+{
+	lhs.swap(rhs);
+}
 
 #endif  // __Utils_Container_round_robin_queue_H__
