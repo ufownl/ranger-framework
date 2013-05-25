@@ -19,6 +19,8 @@
 #ifndef __Utils_Object_SmartPointer_H__
 #define __Utils_Object_SmartPointer_H__
 
+#include <algorithm>
+
 template <class T>
 class SmartPointer
 {
@@ -91,9 +93,8 @@ public:
 
     void swap(SmartPointer<T>& rhs)
 	{
-		T* temp = mObject;
-		mObject = rhs.mObject;
-		rhs.mObject = temp;
+		using std::swap;
+		swap(mObject, rhs.mObject);
 	}
 
 private:
@@ -142,15 +143,10 @@ bool operator >= (const SmartPointer<T>& lhs, const SmartPointer<T>& rhs)
 	return lhs.data() >= rhs.data();
 }
 
-namespace std
+template <class T>
+void swap(SmartPointer<T>& lhs, SmartPointer<T>& rhs)
 {
-
-	template <class T>
-	void swap(SmartPointer<T>& lhs, SmartPointer<T>& rhs)
-	{
-		lhs.swap(rhs);
-	}
-
+	lhs.swap(rhs);
 }
 
 #endif  // __Utils_Object_SmartPointer_H__
