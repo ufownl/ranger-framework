@@ -49,7 +49,7 @@ private:
 #ifdef _DEBUG
 		MemoryState state;
 
-		MemoryLeakDetector::getSingleton().checkMemoryState(state);
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 
 		size_t init = state.size();
 		void* p[N];
@@ -57,10 +57,10 @@ private:
 		for (size_t i = 0; i < N; ++i)
 		{
 			p[i] = Test_Alloc::allocate(1, __FILE__, __LINE__);
-			MemoryLeakDetector::getSingleton().checkMemoryState(state);
+			MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 			CPPUNIT_ASSERT_EQUAL(init + i + 1, state.size());
 		}
-		MemoryLeakDetector::getSingleton().checkMemoryState(state);
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 		CPPUNIT_ASSERT_EQUAL(init + N, state.size());
 
 		size_t idx = 0;
@@ -76,10 +76,10 @@ private:
 		for (size_t i = 0; i < N; ++i)
 		{
 			Test_Alloc::deallocate(p[i]);
-			MemoryLeakDetector::getSingleton().checkMemoryState(state);
+			MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 			CPPUNIT_ASSERT_EQUAL(init + N - i - 1, state.size());
 		}
-		MemoryLeakDetector::getSingleton().checkMemoryState(state);
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 		CPPUNIT_ASSERT_EQUAL(init, state.size());
 #endif  // _DEBUG
 	}

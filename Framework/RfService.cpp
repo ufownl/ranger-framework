@@ -21,7 +21,7 @@
 
 RfService::RfService()
 	: mInitTime(0)
-	, mTick(0)
+	, mTickTime(0)
 	, mIsInitialized(false)
 {
 }
@@ -44,7 +44,7 @@ bool RfService::tick()
 
 	bool ret = onTick(clock() * 1000 / CLOCKS_PER_SEC - mInitTime);
 
-	mTick = (clock() - t) * 1000 / CLOCKS_PER_SEC;
+	mTickTime = (clock() - t) * 1000 / CLOCKS_PER_SEC;
 
 	return ret;
 }
@@ -60,7 +60,7 @@ void RfService::shutdown()
 bool RfService::onInitialize()
 {
 	mInitTime = clock() * 1000 / CLOCKS_PER_SEC;
-	mTick = 0;
+	mTickTime = 0;
 	mIsInitialized = true;
 	return true;
 }
@@ -73,4 +73,14 @@ bool RfService::onTick(long escape)
 void RfService::onShutdown()
 {
 	mIsInitialized = false;
+}
+
+long RfService::getInitTime() const
+{
+	return mInitTime;
+}
+
+long RfService::getTickTime() const
+{
+	return mTickTime;
 }

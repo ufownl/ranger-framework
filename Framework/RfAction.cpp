@@ -31,6 +31,11 @@ RfAction::~RfAction()
 {
 }
 
+RfAction::ID RfAction::getActionID() const
+{
+	return mActionID;
+}
+
 void RfAction::setHandler(RfActionHandler* handler)
 {
 	mHandler = handler;
@@ -56,11 +61,6 @@ bool RfAction::execute()
 	}
 
 	return true;
-}
-
-RfAction::ID RfAction::id() const
-{
-	return mActionID;
 }
 
 void RfAction::response(const void* params)

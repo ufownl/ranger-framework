@@ -29,5 +29,5 @@ BtConditionNode::~BtConditionNode()
 
 bool BtConditionNode::doBehavior()
 {
-	return luabind::call_function<bool>(mLua, "condition");
+	return luabind::call_function<bool>(getLua(), "condition");
 }

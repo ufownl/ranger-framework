@@ -24,6 +24,7 @@
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "Thread/ThreadLocalStorage.h"
 #endif  // !_WIN32 && !_WIN64
+#include "Process/AtExit.h"
 #include <stdexcept>
 
 template <class T, class _thread_policy>
@@ -175,19 +176,76 @@ struct SingletonOpRfNewCreation
 	}
 };
 
+template <class T>
+struct SingletonDefaultLifetime
+{
+	static void regist()
+	{
+	}
+};
+
+template <class T>
+struct SingletonDestroyAtExit
+{
+	static void regist()
+	{
+		if (!AtExit::regist(&T::destroy))
+		{
+			throw std::runtime_error("atexit error.");
+		}
+	}
+};
+
 template <
 	class T,
 	template <class> class _creation_policy = SingletonStaticCreation,
+	template <class> class _lifetime_policy = SingletonDefaultLifetime,
 	template <class> class _thread_policy = ClassLevelLockable,
 	template <class, class> class _storage_policy = DefaultSingletonStorage
 >
 class SingletonHolder
-	: public _thread_policy<SingletonHolder<T, _creation_policy, _thread_policy, _storage_policy> >
-	, public _storage_policy<T, _thread_policy<SingletonHolder<T, _creation_policy, _thread_policy, _storage_policy> > >
+	: public _thread_policy<
+		SingletonHolder<
+			T,
+			_creation_policy,
+			_lifetime_policy,
+			_thread_policy,
+			_storage_policy
+		>
+	>
+	, public _storage_policy<
+		T,
+		_thread_policy<
+			SingletonHolder<
+				T,
+				_creation_policy,
+				_lifetime_policy,
+				_thread_policy,
+				_storage_policy
+			>
+		>
+	>
 {
 public:
 	typedef _creation_policy<T> CreationPolicy;
-	typedef _thread_policy<SingletonHolder<T, _creation_policy, _thread_policy, _storage_policy> > ThreadPolicy;
+	typedef _lifetime_policy<
+		SingletonHolder<
+			T,
+			_creation_policy,
+			_lifetime_policy,
+			_thread_policy,
+			_storage_policy
+		>
+	> LifetimePolicy;
+	typedef _thread_policy<
+		SingletonHolder<
+			T,
+			_creation_policy,
+			_lifetime_policy,
+			_thread_policy,
+			_storage_policy
+		>
+	> ThreadPolicy;
 	typedef _storage_policy<T, ThreadPolicy> StoragePolicy;
 
 public:
@@ -201,6 +259,7 @@ public:
 			if (!StoragePolicy::msInstance)
 			{
 				StoragePolicy::msInstance = CreationPolicy::create();
+				LifetimePolicy::regist();
 			}
 		}
 

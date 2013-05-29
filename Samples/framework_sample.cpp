@@ -60,7 +60,7 @@ protected:
 
 		for ( ; !mQue.empty(); mQue.pop())
 		{
-			mActionHandler->response(mQue.front(), 0);
+			getActionHandler()->response(mQue.front(), 0);
 		}
 
 		if (std::cin.get() == 'q')
@@ -91,25 +91,25 @@ public:
 		setTimeout(5000);
 
 		++gCount;
-		std::cout << "construct " << mActionID << " " << mIndex << std::endl;
+		std::cout << "construct " << getActionID() << " " << mIndex << std::endl;
 	}
 
 	~MyAction()
 	{
 		--gCount;
-		std::cout << "destruct " << mActionID << " " << mIndex << std::endl;
+		std::cout << "destruct " << getActionID() << " " << mIndex << std::endl;
 	}
 
 protected:
 	virtual bool onExecute()
 	{
-		std::cout << "onExecute " << mActionID << " " << mIndex << std::endl;
+		std::cout << "onExecute " << getActionID() << " " << mIndex << std::endl;
 		return true;
 	}
 
 	virtual bool onResponse(const void* params)
 	{
-		std::cout << "onResponse " << mActionID << " " << mIndex << std::endl;
+		std::cout << "onResponse " << getActionID() << " " << mIndex << std::endl;
 		return true;
 	}
 
@@ -156,11 +156,11 @@ protected:
 		for (int i = 0; i < 4; ++i)
 		{
 			action = RfNew MyAction;
-			action->setHandler(mActionHandler);
+			action->setHandler(getActionHandler());
 			if (action->execute())
 			{
-				std::cout << "execute " << action->id() << std::endl;
-				mService->push(action->id());
+				std::cout << "execute " << action->getActionID() << std::endl;
+				mService->push(action->getActionID());
 			}
 		}
 

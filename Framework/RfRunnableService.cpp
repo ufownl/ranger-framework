@@ -37,7 +37,7 @@ void RfRunnableService::run()
 {
 	while (tick())
 	{
-		long t = mPeriod - mTick;
+		long t = mPeriod - getTickTime();
 
 		t = (t > 0 ? t : 0);
 

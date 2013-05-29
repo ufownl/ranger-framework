@@ -43,11 +43,12 @@ protected:
 	virtual bool onTick(long escape);
 	virtual void onShutdown();
 
-protected:
-	long mInitTime;
-	long mTick;
+	long getInitTime() const;
+	long getTickTime() const;
 
 private:
+	long mInitTime;
+	long mTickTime;
 	bool mIsInitialized;
 };
 

@@ -45,3 +45,8 @@ bool RfRequestService::onInitialize()
 
 	return true;
 }
+
+RfActionHandler* RfRequestService::getActionHandler() const
+{
+	return mActionHandler;
+}

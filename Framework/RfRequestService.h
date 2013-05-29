@@ -32,7 +32,9 @@ public:
 protected:
 	virtual bool onInitialize();
 
-protected:
+	RfActionHandler* getActionHandler() const;
+
+private:
 	RfActionHandler* mActionHandler;
 };
 
