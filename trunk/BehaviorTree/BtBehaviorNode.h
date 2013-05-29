@@ -48,7 +48,7 @@ protected:
 	void exportParams();
 	bool initialize();
 
-	lua_State* getLua();
+	lua_State* getLua() const;
 
 private:
 	typedef std::vector<
