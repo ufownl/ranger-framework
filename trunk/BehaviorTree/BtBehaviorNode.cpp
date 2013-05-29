@@ -84,3 +84,8 @@ bool BtBehaviorNode::initialize()
 
 	return true;
 }
+
+lua_State* BtBehaviorNode::getLua()
+{
+	return mLua;
+}

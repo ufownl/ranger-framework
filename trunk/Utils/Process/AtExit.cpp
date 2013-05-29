@@ -16,18 +16,10 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "BtActionNode.h"
-#include <luabind/luabind.hpp>
+#include "Process/AtExit.h"
+#include <stdlib.h>
 
-BtActionNode::BtActionNode()
+bool AtExit::regist(void (*func)())
 {
-}
-
-BtActionNode::~BtActionNode()
-{
-}
-
-bool BtActionNode::doBehavior()
-{
-	return luabind::call_function<bool>(getLua(), "action");
+	return !atexit(func);
 }

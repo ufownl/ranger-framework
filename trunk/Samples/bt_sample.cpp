@@ -56,7 +56,7 @@ class MyConditionNode : public BtConditionNode
 protected:
 	virtual void defineExtraData()
 	{
-		luabind::module(mLua)
+		luabind::module(getLua())
 		[
 			luabind::class_<MyExtra>("MyExtra")
 				.def("func", &MyExtra::func)
@@ -65,7 +65,7 @@ protected:
 
 	virtual void exportExtraData(void* extra)
 	{
-		luabind::globals(mLua)["extra"] = static_cast<MyExtra*>(extra);
+		luabind::globals(getLua())["extra"] = static_cast<MyExtra*>(extra);
 	}
 };
 
@@ -85,7 +85,7 @@ class MyActionNode : public BtActionNode
 protected:
 	virtual void defineExtraData()
 	{
-		luabind::module(mLua)
+		luabind::module(getLua())
 		[
 			luabind::class_<MyExtra>("MyExtra")
 				.def("func", &MyExtra::func)
@@ -94,7 +94,7 @@ protected:
 
 	virtual void exportExtraData(void* extra)
 	{
-		luabind::globals(mLua)["extra"] = static_cast<MyExtra*>(extra);
+		luabind::globals(getLua())["extra"] = static_cast<MyExtra*>(extra);
 	}
 };
 

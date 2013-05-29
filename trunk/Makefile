@@ -57,6 +57,7 @@ MemoryLeakDetector_debug_o = $(obj_dir_debug)/MemoryLeakDetector.o
 Mutex_debug_o = $(obj_dir_debug)/Mutex.o
 TypeInfo_debug_o = $(obj_dir_debug)/TypeInfo.o
 Coroutine_debug_o = $(obj_dir_debug)/Coroutine.o
+AtExit_debug_o = $(obj_dir_debug)/AtExit.o
 RfAction_debug_o = $(obj_dir_debug)/RfAction.o
 RfActionHandler_debug_o = $(obj_dir_debug)/RfActionHandler.o
 RfRequestService_debug_o = $(obj_dir_debug)/RfRequestService.o
@@ -85,6 +86,7 @@ MemoryLeakDetector_release_o = $(obj_dir_release)/MemoryLeakDetector.o
 Mutex_release_o = $(obj_dir_release)/Mutex.o
 TypeInfo_release_o = $(obj_dir_release)/TypeInfo.o
 Coroutine_release_o = $(obj_dir_release)/Coroutine.o
+AtExit_release_o = $(obj_dir_release)/AtExit.o
 RfAction_release_o = $(obj_dir_release)/RfAction.o
 RfActionHandler_release_o = $(obj_dir_release)/RfActionHandler.o
 RfRequestService_release_o = $(obj_dir_release)/RfRequestService.o
@@ -108,14 +110,15 @@ BtConditionNode_release_o = $(obj_dir_release)/BtConditionNode.o
 BtActionNode_release_o = $(obj_dir_release)/BtActionNode.o
 BtXmlGenerator_release_o = $(obj_dir_release)/BtXmlGenerator.o
 
-obj_debug = $(Allocator_debug_o) $(MemoryLeakDetector_debug_o) $(Mutex_debug_o) $(TypeInfo_debug_o) $(Coroutine_debug_o) $(RfAction_debug_o) $(RfActionHandler_debug_o) $(RfRequestService_debug_o) $(RfRunnableService_debug_o) $(RfService_debug_o) $(RfServiceManager_debug_o) $(BtParams_debug_o) $(BtNode_debug_o) $(BtSelectorNode_debug_o) $(BtSequenceNode_debug_o) $(BtParallelSucceedOnAllNode_debug_o) $(BtParallelFailOnAllNode_debug_o) $(BtParallelHybridNode_debug_o) $(BtDecoratorNotNode_debug_o) $(BtDecoratorTimerNode_debug_o) $(BtDecoratorCounterNode_debug_o) $(BtDecoratorForNode_debug_o) $(BtDecoratorUntilNode_debug_o) $(BtBehaviorNode_debug_o) $(BtConditionNode_debug_o) $(BtActionNode_debug_o) $(BtXmlGenerator_debug_o)
-obj_release = $(Allocator_release_o) $(MemoryLeakDetector_release_o) $(Mutex_release_o) $(TypeInfo_release_o) $(Coroutine_release_o) $(RfAction_release_o) $(RfActionHandler_release_o) $(RfRequestService_release_o) $(RfRunnableService_release_o) $(RfService_release_o) $(RfServiceManager_release_o) $(BtParams_release_o) $(BtNode_release_o) $(BtSelectorNode_release_o) $(BtSequenceNode_release_o) $(BtParallelSucceedOnAllNode_release_o) $(BtParallelFailOnAllNode_release_o) $(BtParallelHybridNode_release_o) $(BtDecoratorNotNode_release_o) $(BtDecoratorTimerNode_release_o) $(BtDecoratorCounterNode_release_o) $(BtDecoratorForNode_release_o) $(BtDecoratorUntilNode_release_o) $(BtBehaviorNode_release_o) $(BtConditionNode_release_o) $(BtActionNode_release_o) $(BtXmlGenerator_release_o)
+obj_debug = $(Allocator_debug_o) $(MemoryLeakDetector_debug_o) $(Mutex_debug_o) $(TypeInfo_debug_o) $(Coroutine_debug_o) $(AtExit_debug_o) $(RfAction_debug_o) $(RfActionHandler_debug_o) $(RfRequestService_debug_o) $(RfRunnableService_debug_o) $(RfService_debug_o) $(RfServiceManager_debug_o) $(BtParams_debug_o) $(BtNode_debug_o) $(BtSelectorNode_debug_o) $(BtSequenceNode_debug_o) $(BtParallelSucceedOnAllNode_debug_o) $(BtParallelFailOnAllNode_debug_o) $(BtParallelHybridNode_debug_o) $(BtDecoratorNotNode_debug_o) $(BtDecoratorTimerNode_debug_o) $(BtDecoratorCounterNode_debug_o) $(BtDecoratorForNode_debug_o) $(BtDecoratorUntilNode_debug_o) $(BtBehaviorNode_debug_o) $(BtConditionNode_debug_o) $(BtActionNode_debug_o) $(BtXmlGenerator_debug_o)
+obj_release = $(Allocator_release_o) $(MemoryLeakDetector_release_o) $(Mutex_release_o) $(TypeInfo_release_o) $(Coroutine_release_o) $(AtExit_release_o) $(RfAction_release_o) $(RfActionHandler_release_o) $(RfRequestService_release_o) $(RfRunnableService_release_o) $(RfService_release_o) $(RfServiceManager_release_o) $(BtParams_release_o) $(BtNode_release_o) $(BtSelectorNode_release_o) $(BtSequenceNode_release_o) $(BtParallelSucceedOnAllNode_release_o) $(BtParallelFailOnAllNode_release_o) $(BtParallelHybridNode_release_o) $(BtDecoratorNotNode_release_o) $(BtDecoratorTimerNode_release_o) $(BtDecoratorCounterNode_release_o) $(BtDecoratorForNode_release_o) $(BtDecoratorUntilNode_release_o) $(BtBehaviorNode_release_o) $(BtConditionNode_release_o) $(BtActionNode_release_o) $(BtXmlGenerator_release_o)
 
 Allocator_src = $(Utils_dir)/Memory/Allocator.cpp
 MemoryLeakDetector_src = $(Utils_dir)/Memory/MemoryLeakDetector.cpp
 Mutex_src = $(Utils_dir)/Thread/Mutex.cpp
 TypeInfo_src = $(Utils_dir)/Object/TypeInfo.cpp
 Coroutine_src = $(Utils_dir)/Thread/Coroutine.cpp
+AtExit_src = $(Utils_dir)/Process/AtExit.cpp
 RfAction_src = $(Framework_dir)/RfAction.cpp
 RfActionHandler_src = $(Framework_dir)/RfActionHandler.cpp
 RfRequestService_src = $(Framework_dir)/RfRequestService.cpp
@@ -162,6 +165,9 @@ $(TypeInfo_debug_o): $(TypeInfo_src)
 	$(cxx_debug)
 
 $(Coroutine_debug_o): $(Coroutine_src)
+	$(cxx_debug)
+
+$(AtExit_debug_o): $(AtExit_src)
 	$(cxx_debug)
 
 $(RfAction_debug_o): $(RfAction_src)
@@ -243,6 +249,9 @@ $(TypeInfo_release_o): $(TypeInfo_src)
 	$(cxx_release)
 
 $(Coroutine_release_o): $(Coroutine_src)
+	$(cxx_release)
+
+$(AtExit_release_o): $(AtExit_src)
 	$(cxx_release)
 
 $(RfAction_release_o): $(RfAction_src)

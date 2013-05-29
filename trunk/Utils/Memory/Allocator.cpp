@@ -26,13 +26,13 @@
 void* Allocator::allocate(size_t size, const char* file, long line)
 {
     void *p = malloc(size);
-    MemoryLeakDetector::getSingleton().onAllocate(p, size, file, line);
+    MemoryLeakDetectorHolder::instance().onAllocate(p, size, file, line);
     return p;
 }
 
 void Allocator::deallocate(void* p)
 {
-    MemoryLeakDetector::getSingleton().onDeallocate(p);
+    MemoryLeakDetectorHolder::instance().onDeallocate(p);
     free(p);
 }
 

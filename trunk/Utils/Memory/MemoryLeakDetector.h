@@ -38,9 +38,7 @@ struct MemoryInfo
 
 typedef std::list<MemoryInfo> MemoryState;
 
-class MemoryLeakDetector
-	: public Singleton<MemoryLeakDetector>
-	, private boost::noncopyable
+class MemoryLeakDetector : private boost::noncopyable
 {
 public:
     MemoryLeakDetector();
@@ -58,5 +56,11 @@ private:
     MemoryState mState;
     MutexCaller<MemoryState*> mStateProxy;
 };
+
+typedef SingletonHolder<
+	MemoryLeakDetector,
+	SingletonOpNewCreation,
+	SingletonDestroyAtExit
+> MemoryLeakDetectorHolder;
 
 #endif  // __Utils_Memory_MemoryLeakDetector_H__

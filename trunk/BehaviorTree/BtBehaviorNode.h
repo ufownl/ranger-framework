@@ -48,8 +48,7 @@ protected:
 	void exportParams();
 	bool initialize();
 
-protected:
-	lua_State* mLua;
+	lua_State* getLua();
 
 private:
 	typedef std::vector<
@@ -57,6 +56,7 @@ private:
 		stl_alloc<std::pair<std::string, double> >::type
 	> BtParamTable;
 
+	lua_State* mLua;
 	std::string mScript;
 	BtParamTable mParams;
 };

@@ -35,11 +35,12 @@ public:
 	RfAction();
 	virtual ~RfAction();
 
+	ID getActionID() const;
+
 	void setHandler(RfActionHandler* handler);
 	void setTimeout(long timeout);
 
 	bool execute();
-	ID id() const;
 
 protected:
 	void response(const void* params);
@@ -49,7 +50,7 @@ protected:
 
 	virtual bool onTick(long escape);
 
-protected:
+private:
 	ID mActionID;
 	RfActionHandler* mHandler;
 	bool mIsActive;

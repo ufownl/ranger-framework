@@ -102,14 +102,29 @@ struct BtNodeTraits<BtNode>
 	}
 };
 
-typedef Factory<
-	BtNode,
-	std::string,
-	BtNode* (*)(),
-	SingleThread
-> BtNodeFactory;
+#if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
+#include "Memory/TCMallocAllocator.h"
+#define BtNodeFactory_Alloc	TCMallocAllocator
+#else
+#define BtNodeFactory_Alloc	Allocator
+#endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-typedef SingletonHolder<BtNodeFactory> BtNodeFactoryHolder;
+struct BtNodeFactory
+	: public MemObject<BtNodeFactory_Alloc>
+	, public Factory<
+		BtNode,
+		std::string,
+		BtNode* (*)(),
+		SingleThread
+	> 
+{
+};
+
+typedef SingletonHolder<
+	BtNodeFactory,
+	SingletonOpRfNewCreation,
+	SingletonDestroyAtExit
+> BtNodeFactoryHolder;
 
 template <class T>
 class BtNodeFactoryRegister
