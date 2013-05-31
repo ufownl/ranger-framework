@@ -19,23 +19,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include "Object/RefObject.h"
 
-struct Object : public RefObject<>
-{
-	Object()
-	{
-		++count;
-	}
-
-	~Object()
-	{
-		--count;
-	}
-
-	static size_t count;
-};
-
-size_t Object::count = 0;
-
 class RefObjectTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(RefObjectTest);
@@ -52,6 +35,21 @@ public:
 	}
 
 private:
+	struct Object : public RefObject<>
+	{
+		Object()
+		{
+			++count;
+		}
+
+		~Object()
+		{
+			--count;
+		}
+
+		static size_t count;
+	};
+
 	void test()
 	{
 		Object* obj = RfNew Object;
@@ -68,5 +66,7 @@ private:
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), Object::count);
 	}
 };
+
+size_t RefObjectTest::Object::count = 0;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(RefObjectTest);

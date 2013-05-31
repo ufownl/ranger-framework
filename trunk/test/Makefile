@@ -35,7 +35,7 @@ endef
 
 all: test
 
-test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o HierarchyGeneratorTest.o FiniteStateMachineTest.o RefObjectTest.o
+test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o HierarchyGeneratorTest.o FiniteStateMachineTest.o RefObjectTest.o SmartPointerTest.o
 	$(ld_run)
 
 main.o: main.cpp
@@ -87,6 +87,9 @@ FiniteStateMachineTest.o: Utils/MPL/FiniteStateMachineTest.cpp
 	$(cxx_run)
 
 RefObjectTest.o: Utils/Object/RefObjectTest.cpp
+	$(cxx_run)
+
+SmartPointerTest.o: Utils/Object/SmartPointerTest.cpp
 	$(cxx_run)
 
 clean:
