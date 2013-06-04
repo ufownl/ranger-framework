@@ -26,8 +26,8 @@ obj_dir_release = $(obj_dir)/release
 
 cflags_debug = -g -fPIC -Wall -D_DEBUG -I. -I$(Utils_dir)
 cflags_release = -O2 -fPIC -Wall -DNDEBUG -I. -I$(Utils_dir)
-ldflags_debug =
-ldflags_release =
+ldflags_debug = -L$(out_dir) -lUtils_debug
+ldflags_release = -L$(out_dir) -lUtils
 
 define cxx_debug
 $(cxx) -c $(cflags_debug) $^ -o $@
