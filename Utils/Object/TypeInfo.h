@@ -29,14 +29,16 @@ public:
 	TypeInfo(const TypeInfo& info);
 
 	TypeInfo& operator = (const TypeInfo& rhs);
-	bool operator == (const TypeInfo& rhs) const;
-	bool operator != (const TypeInfo& rhs) const;
-	bool operator < (const TypeInfo& rhs) const;
 
 	const char* name() const;
+	const std::type_info& data() const;
 
 private:
 	const std::type_info* mInfo;
 };
+
+bool operator == (const TypeInfo& lhs, const TypeInfo& rhs);
+bool operator != (const TypeInfo& lhs, const TypeInfo& rhs);
+bool operator < (const TypeInfo& lhs, const TypeInfo& rhs);
 
 #endif  // __Utils_Object_TypeInfo_H__
