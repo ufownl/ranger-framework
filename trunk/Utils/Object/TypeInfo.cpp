@@ -40,29 +40,29 @@ TypeInfo& TypeInfo::operator = (const TypeInfo& rhs)
 	return *this;
 }
 
-bool TypeInfo::operator == (const TypeInfo& rhs) const
-{
-	assert(mInfo);
-	assert(rhs.mInfo);
-	return *mInfo == *rhs.mInfo;
-}
-
-bool TypeInfo::operator != (const TypeInfo& rhs) const
-{
-	assert(mInfo);
-	assert(rhs.mInfo);
-	return *mInfo != *rhs.mInfo;
-}
-
-bool TypeInfo::operator < (const TypeInfo& rhs) const
-{
-	assert(mInfo);
-	assert(rhs.mInfo);
-	return mInfo->before(*rhs.mInfo);
-}
-
 const char* TypeInfo::name() const
 {
 	assert(mInfo);
 	return mInfo->name();
+}
+
+const std::type_info& TypeInfo::data() const
+{
+	assert(mInfo);
+	return *mInfo;
+}
+
+bool operator == (const TypeInfo& lhs, const TypeInfo& rhs)
+{
+	return lhs.data() == rhs.data();
+}
+
+bool operator != (const TypeInfo& lhs, const TypeInfo& rhs)
+{
+	return lhs.data() != rhs.data();
+}
+
+bool operator < (const TypeInfo& lhs, const TypeInfo& rhs)
+{
+	return lhs.data().before(rhs.data());
 }
