@@ -20,6 +20,7 @@
 #define __Utils_Object_TypeInfo_H__
 
 #include <typeinfo>
+#include <boost/functional/hash.hpp>
 
 class TypeInfo
 {
@@ -31,6 +32,8 @@ public:
 	TypeInfo& operator = (const TypeInfo& rhs);
 
 	const char* name() const;
+	size_t hash_code() const;
+
 	const std::type_info& data() const;
 
 private:
@@ -40,5 +43,19 @@ private:
 bool operator == (const TypeInfo& lhs, const TypeInfo& rhs);
 bool operator != (const TypeInfo& lhs, const TypeInfo& rhs);
 bool operator < (const TypeInfo& lhs, const TypeInfo& rhs);
+
+namespace boost
+{
+
+	template <>
+	struct hash<TypeInfo> : public std::unary_function<TypeInfo, size_t>
+	{
+		size_t operator () (const TypeInfo& v) const
+		{
+			return v.hash_code();
+		}
+	};
+
+}
 
 #endif  // __Utils_Object_TypeInfo_H__

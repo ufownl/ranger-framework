@@ -17,6 +17,7 @@
  */
 
 #include "Object/TypeInfo.h"
+#include <string.h>
 #include <assert.h>
 
 TypeInfo::TypeInfo()
@@ -44,6 +45,15 @@ const char* TypeInfo::name() const
 {
 	assert(mInfo);
 	return mInfo->name();
+}
+
+size_t TypeInfo::hash_code() const
+{
+	assert(mInfo);
+
+	const char* name = mInfo->name();
+
+	return boost::hash_range(name, name + strlen(name));
 }
 
 const std::type_info& TypeInfo::data() const

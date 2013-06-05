@@ -20,8 +20,8 @@
 #define __Utils_Object_Factory_H__
 
 #include "Object/Singleton.h"
-#include "Container/associate_vector.h"
 #include "Memory/STLAllocator.h"
+#include <boost/unordered_map.hpp>
 #include <stdexcept>
 #include <utility>
 
@@ -29,11 +29,12 @@ template <class _id_type, class _creator>
 class DefaultFactoryStorage
 {
 private:
-	typedef associate_vector<
+	typedef boost::unordered_map<
 		_id_type,
 		_creator,
-		std::less<_id_type>,
-		typename stl_alloc<std::pair<_id_type, _creator> >::type
+		boost::hash<_id_type>,
+		std::equal_to<_id_type>,
+		typename stl_alloc<std::pair<const _id_type, _creator> >::type
 	> CallbackMap;
 
 public:
