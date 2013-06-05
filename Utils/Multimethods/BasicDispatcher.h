@@ -20,18 +20,19 @@
 #define __Utils_Multimethods_BasicDispatcher_H__
 
 #include "Object/TypeInfo.h"
-#include "Container/associate_vector.h"
 #include "Memory/STLAllocator.h"
+#include <boost/unordered_map.hpp>
 
 template <class _lhs_base, class _rhs_base, class _result, class _callback, class _error_handler>
 class BasicDispatcher
 {
 private:
 	typedef std::pair<TypeInfo, TypeInfo> key_t;
-	typedef associate_vector<
+	typedef boost::unordered_map<
 		key_t,
 		_callback,
-		std::less<key_t>,
+		boost::hash<key_t>,
+		std::equal_to<key_t>,
 		typename stl_alloc<std::pair<key_t, _callback> >::type
 	> map_t;
 
@@ -68,5 +69,25 @@ public:
 private:
 	map_t mCallbacks;
 };
+
+namespace boost
+{
+
+	template <>
+	struct hash<std::pair<TypeInfo, TypeInfo> >
+		: public std::unary_function<std::pair<TypeInfo, TypeInfo>, size_t>
+	{
+		size_t operator () (const std::pair<TypeInfo, TypeInfo>& v) const
+		{
+			size_t seed = 0;
+
+			boost::hash_combine(seed, v.first);
+			boost::hash_combine(seed, v.second);
+
+			return seed;
+		}
+	};
+
+}
 
 #endif  // __Utils_Multimethods_BasicDispatcher_H__
