@@ -27,17 +27,17 @@ RfServiceManager::~RfServiceManager()
 {
 }
 
-void RfServiceManager::append(RfService* service)
+void RfServiceManager::append(RfServicePtr service)
 {
 	mServices.push_back(service);
 }
 
-void RfServiceManager::prepend(RfService* service)
+void RfServiceManager::prepend(RfServicePtr service)
 {
 	mServices.push_front(service);
 }
 
-RfServiceManager::RfServiceList::iterator RfServiceManager::insert(RfServiceList::iterator pos, RfService* service)
+RfServiceManager::RfServiceList::iterator RfServiceManager::insert(RfServiceList::iterator pos, RfServicePtr service)
 {
 	return mServices.insert(pos, service);
 }

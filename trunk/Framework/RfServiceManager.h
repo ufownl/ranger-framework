@@ -36,9 +36,9 @@ public:
 	RfServiceManager(long period = 100);
 	virtual ~RfServiceManager();
 
-	void append(RfService* service);
-	void prepend(RfService* service);
-	RfServiceList::iterator insert(RfServiceList::iterator pos, RfService* service);
+	void append(RfServicePtr service);
+	void prepend(RfServicePtr service);
+	RfServiceList::iterator insert(RfServiceList::iterator pos, RfServicePtr service);
 	RfServiceList::iterator remove(RfServiceList::iterator pos);
 
 	template <class T>
