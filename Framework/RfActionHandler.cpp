@@ -67,7 +67,7 @@ bool RfActionHandler::onTick(long escape)
 	return true;
 }
 
-bool RfActionHandler::insert(RfAction* action)
+bool RfActionHandler::insert(RfActionPtr action)
 {
 	action_wrapper_t* wrapper = mActPool.allocate();
 
@@ -82,7 +82,7 @@ bool RfActionHandler::insert(RfAction* action)
 	return true;
 }
 
-void RfActionHandler::remove(RfAction* action)
+void RfActionHandler::remove(RfActionPtr action)
 {
 	if (action->mActionID < 0 || static_cast<size_t>(action->mActionID) >= mActPool.size())
 	{

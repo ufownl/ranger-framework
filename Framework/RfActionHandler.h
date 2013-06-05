@@ -40,8 +40,8 @@ protected:
 	virtual bool onTick(long escape);
 
 private:
-	bool insert(RfAction* action);
-	void remove(RfAction* action);
+	bool insert(RfActionPtr action);
+	void remove(RfActionPtr action);
 
 private:
 	struct action_wrapper_t : instrusive_slist_node<action_wrapper_t>
