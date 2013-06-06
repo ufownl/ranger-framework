@@ -41,12 +41,12 @@ private:
 		{
 		}
 
-		virtual unsigned short id() = 0;
+		virtual unsigned short id() const = 0;
 	};
 
 	struct A : Base
 	{
-		virtual unsigned short id()
+		virtual unsigned short id() const
 		{
 			return class_id();
 		}
@@ -64,7 +64,7 @@ private:
 
 	struct B : Base
 	{
-		virtual unsigned short id()
+		virtual unsigned short id() const
 		{
 			return class_id();
 		}
@@ -82,7 +82,7 @@ private:
 
 	struct C : B 
 	{
-		virtual unsigned short id()
+		virtual unsigned short id() const
 		{
 			return class_id();
 		}
@@ -100,7 +100,7 @@ private:
 
 	struct D : B
 	{
-		virtual unsigned short id()
+		virtual unsigned short id() const
 		{
 			return class_id();
 		}
