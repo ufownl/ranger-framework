@@ -24,8 +24,7 @@
 #include "Memory/STLAllocator.h"
 #include <boost/type_traits.hpp>
 #include <list>
-#include <algorithm>
-#include <functional>
+#include <typeinfo>
 
 class RfServiceManager : public RfRunnableService, public Singleton<RfServiceManager, SingleThread, TlsSingletonStorage>
 {
@@ -60,18 +59,29 @@ public:
 	RfServiceList::iterator find()
 	{
 		BOOST_STATIC_ASSERT((boost::is_base_of<RfService, T>::value));
-		return std::find_if(mServices.begin(), mServices.end(), static_cast<bool(*)(RfService*)>(&RfServiceManager::conversion<T>));
+
+		for (RfServiceList::iterator i = mServices.begin(); i != mServices.end(); ++i)
+		{
+			if (typeid(T) == typeid(**i))
+			{
+				return i;
+			}
+		}
+
+		return mServices.end();
 	}
 
 	template <class T>
 	T* get()
 	{
-		BOOST_STATIC_ASSERT((boost::is_base_of<RfService, T>::value));
+		RfServiceList::iterator it = find<T>();
 
-		T* p = 0;
+		if (it == mServices.end())
+		{
+			return 0;
+		}
 
-		std::find_if(mServices.begin(), mServices.end(), std::bind1st(std::ptr_fun(static_cast<bool(*)(T**, RfService*)>(&RfServiceManager::conversion<T>)), &p));
-		return p;
+		return static_cast<T*>(it->data());
 	}
 
 	RfServiceList::iterator nil();
@@ -79,30 +89,6 @@ public:
 protected:
 	virtual bool onTick(long escape);
 	virtual void onShutdown();
-
-private:
-	template <class T>
-	static bool conversion(RfService* service)
-	{
-		BOOST_STATIC_ASSERT((boost::is_base_of<RfService, T>::value));
-		return dynamic_cast<T*>(service) == service;
-	}
-
-	template <class T>
-	static bool conversion(T** res, RfService* service)
-	{
-		BOOST_STATIC_ASSERT((boost::is_base_of<RfService, T>::value));
-
-		T* p = dynamic_cast<T*>(service);
-
-		if (p == service)
-		{
-			*res = p;
-			return true;
-		}
-
-		return false;
-	}
 
 private:
 	RfServiceList mServices;
