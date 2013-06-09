@@ -20,6 +20,7 @@
 #define __Utils_Object_SmartPointer_H__
 
 #include <algorithm>
+#include <boost/functional/hash.hpp>
 
 template <class T>
 class SmartPointer
@@ -147,6 +148,21 @@ template <class T>
 void swap(SmartPointer<T>& lhs, SmartPointer<T>& rhs)
 {
 	lhs.swap(rhs);
+}
+
+namespace boost
+{
+
+	template <class T>
+	struct hash<SmartPointer<T> > : public std::unary_function<SmartPointer<T>, size_t>
+	{
+		size_t operator () (const SmartPointer<T>& v) const
+		{
+			hash<T*> hasher;
+			return hasher(v);
+		}
+	};
+
 }
 
 #endif  // __Utils_Object_SmartPointer_H__

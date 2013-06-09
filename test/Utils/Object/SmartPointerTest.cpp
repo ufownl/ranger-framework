@@ -66,6 +66,9 @@ private:
 		CPPUNIT_ASSERT_EQUAL(p1.data(), p0.data());
 		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(2), p0->getRefCount());
 
+		boost::hash<ObjectPtr> hasher;
+		CPPUNIT_ASSERT_EQUAL(hasher(p0), hasher(p1));
+
 		{
 			ObjectPtr p2 = p0;
 
