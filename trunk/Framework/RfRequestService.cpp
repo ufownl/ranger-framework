@@ -36,7 +36,7 @@ bool RfRequestService::onInitialize()
 		return false;
 	}
 
-	mActionHandler = RfServiceManager::getSingleton().get<RfActionHandler>();
+	mActionHandler = getManager()->get<RfActionHandler>();
 
 	if (!mActionHandler)
 	{

@@ -26,7 +26,7 @@
 #include <list>
 #include <typeinfo>
 
-class RfServiceManager : public RfRunnableService, public Singleton<RfServiceManager, SingleThread, TlsSingletonStorage>
+class RfServiceManager : public RfRunnableService
 {
 public:
 	typedef std::list<RfServicePtr, stl_alloc<RfServicePtr>::type> RfServiceList;

@@ -29,8 +29,12 @@
 #define RfService_Alloc Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
+class RfServiceManager;
+
 class RfService : public RefObject<RfService_Alloc, unsigned int, SingleThread>
 {
+	friend class RfServiceManager;
+
 public:
 	RfService();
 	virtual ~RfService();
@@ -45,11 +49,13 @@ protected:
 
 	long getInitTime() const;
 	long getTickTime() const;
+	RfServiceManager* getManager() const;
 
 private:
 	long mInitTime;
 	long mTickTime;
 	bool mIsInitialized;
+	RfServiceManager* mManager;
 };
 
 DeclareSmartPointer(RfService);

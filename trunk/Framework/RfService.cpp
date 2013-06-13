@@ -23,6 +23,7 @@ RfService::RfService()
 	: mInitTime(0)
 	, mTickTime(0)
 	, mIsInitialized(false)
+	, mManager(0)
 {
 }
 
@@ -81,4 +82,9 @@ long RfService::getInitTime() const
 long RfService::getTickTime() const
 {
 	return mTickTime;
+}
+
+RfServiceManager* RfService::getManager() const
+{
+	return mManager;
 }
