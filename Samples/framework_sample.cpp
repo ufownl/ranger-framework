@@ -136,7 +136,7 @@ protected:
 			return false;
 		}
 		
-		mService = RfServiceManager::getSingleton().get<MyResponseService>();
+		mService = getManager()->get<MyResponseService>();
 		assert(mService);
 
 		std::cout << "MyRequestService::onInitialize" << std::endl;

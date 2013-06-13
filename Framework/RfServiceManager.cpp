@@ -29,16 +29,19 @@ RfServiceManager::~RfServiceManager()
 
 void RfServiceManager::append(RfServicePtr service)
 {
+	service->mManager = this;
 	mServices.push_back(service);
 }
 
 void RfServiceManager::prepend(RfServicePtr service)
 {
+	service->mManager = this;
 	mServices.push_front(service);
 }
 
 RfServiceManager::RfServiceList::iterator RfServiceManager::insert(RfServiceList::iterator pos, RfServicePtr service)
 {
+	service->mManager = this;
 	return mServices.insert(pos, service);
 }
 
