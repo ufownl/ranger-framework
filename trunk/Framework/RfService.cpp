@@ -17,7 +17,7 @@
  */
 
 #include "RfService.h"
-#include <time.h>
+#include "System/Timer.h"
 
 RfService::RfService()
 	: mInitTime(0)
@@ -33,7 +33,7 @@ RfService::~RfService()
 
 bool RfService::tick()
 {
-	clock_t t = clock();
+	unsigned int t = RfClock();
 
 	if (!mIsInitialized)
 	{
@@ -45,9 +45,9 @@ bool RfService::tick()
 		mIsInitialized = true;
 	}
 
-	bool ret = onTick(clock() * 1000 / CLOCKS_PER_SEC - mInitTime);
+	bool ret = onTick(RfClock() - mInitTime);
 
-	mTickTime = (clock() - t) * 1000 / CLOCKS_PER_SEC;
+	mTickTime = RfClock() - t;
 
 	return ret;
 }
@@ -59,7 +59,7 @@ void RfService::shutdown()
 
 bool RfService::onInitialize()
 {
-	mInitTime = clock() * 1000 / CLOCKS_PER_SEC;
+	mInitTime = RfClock();
 	mTickTime = 0;
 	return true;
 }

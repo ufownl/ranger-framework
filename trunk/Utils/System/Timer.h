@@ -16,31 +16,19 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RangerFramework_RfRunnableService_H__
-#define __RangerFramework_RfRunnableService_H__
+#ifndef __Utils_System_Timer_H__
+#define __Utils_System_Timer_H__
 
-#include "RfService.h"
-
-class RfRunnableService : public RfService
+#ifdef __cplusplus
+extern "C"
 {
-public:
-	RfRunnableService(long period);
-	virtual ~RfRunnableService();
+#endif  // __cplusplus
 
-	void run();
-	void stop();
+unsigned int RfClock();
+void RfSleep(unsigned msec);
 
-	bool isRunning();
+#ifdef __cplusplus
+}
+#endif  // __cplusplus
 
-protected:
-	virtual bool onInitialize();
-	virtual bool onTick(long escape);
-
-private:
-	const long mPeriod;
-	volatile bool mIsRunning;
-};
-
-DeclareSmartPointer(RfRunnableService);
-
-#endif  // __RangerFramework_RfRunnableService_H__
+#endif  // __Utils_System_Timer_H__

@@ -52,8 +52,8 @@ protected:
 	RfServiceManager* getManager() const;
 
 private:
-	long mInitTime;
-	long mTickTime;
+	unsigned int mInitTime;
+	unsigned int mTickTime;
 	bool mIsInitialized;
 	RfServiceManager* mManager;
 };

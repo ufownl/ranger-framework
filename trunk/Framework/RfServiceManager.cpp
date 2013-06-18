@@ -47,6 +47,7 @@ RfServiceManager::RfServiceList::iterator RfServiceManager::insert(RfServiceList
 
 RfServiceManager::RfServiceList::iterator RfServiceManager::remove(RfServiceList::iterator pos)
 {
+	(*pos)->mManager = 0;
 	return mServices.erase(pos);
 }
 

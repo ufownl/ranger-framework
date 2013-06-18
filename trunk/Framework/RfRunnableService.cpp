@@ -17,11 +17,7 @@
  */
 
 #include "RfRunnableService.h"
-#if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif  // _WIN32 || _WIN64
+#include "System/Timer.h"
 
 RfRunnableService::RfRunnableService(long period)
 	: mPeriod(period)
@@ -43,11 +39,7 @@ void RfRunnableService::run()
 
 		if (t)
 		{
-#if defined(_WIN32) || defined(_WIN64)
-			Sleep(t);
-#else
-			usleep(t * 1000);
-#endif  // _WIN32 || _WIN64
+			RfSleep(t);
 		}
 	}
 
@@ -84,10 +76,4 @@ bool RfRunnableService::onTick(long escape)
 	}
 
 	return isRunning();
-}
-
-void RfRunnableService::onShutdown()
-{
-	stop();
-	RfService::onShutdown();
 }

@@ -18,7 +18,7 @@
 
 #include "BtDecoratorTimerNode.h"
 #include "BtParams.h"
-#include <time.h>
+#include "System/Timer.h"
 
 static BtNodeFactoryRegister<BtDecoratorTimerNode> msReg;
 
@@ -55,7 +55,7 @@ bool BtDecoratorTimerNode::execute(BtParams* params)
 
 	const BtParams::BtCacheValue* p = params->getCacheData(mIndex);
 
-	if (p && clock() - p->long_v < mCooldown * CLOCKS_PER_SEC)
+	if (p && RfClock() - p->uint_v < mCooldown * 1000)
 	{
 		return false;
 	}
@@ -67,7 +67,7 @@ bool BtDecoratorTimerNode::execute(BtParams* params)
 
 	BtParams::BtCacheValue v;
 
-	v.long_v = clock();
+	v.uint_v = RfClock();
 	params->setCacheData(mIndex, v);
 
 	return true;
