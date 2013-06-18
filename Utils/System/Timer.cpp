@@ -16,31 +16,30 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RangerFramework_RfRunnableService_H__
-#define __RangerFramework_RfRunnableService_H__
+#include "System/Timer.h"
+#if defined(_WIN32) || defined(_WIN64)
+#include "Windows.h"
+#else
+#include "unistd.h"
+#include "sys/time.h"
+#endif  // _WIN32 || _WIN64
 
-#include "RfService.h"
-
-class RfRunnableService : public RfService
+unsigned int RfClock()
 {
-public:
-	RfRunnableService(long period);
-	virtual ~RfRunnableService();
+#if defined(_WIN32) || defined(_WIN64)
+	return GetTickCount();
+#else
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+	return tv.tv_sec * 1000 + tv.tv_usec / 1000000;
+#endif  // _WIN32 || _WIN64
+}
 
-	void run();
-	void stop();
-
-	bool isRunning();
-
-protected:
-	virtual bool onInitialize();
-	virtual bool onTick(long escape);
-
-private:
-	const long mPeriod;
-	volatile bool mIsRunning;
-};
-
-DeclareSmartPointer(RfRunnableService);
-
-#endif  // __RangerFramework_RfRunnableService_H__
+void RfSleep(unsigned msec)
+{
+#if defined(_WIN32) || defined(_WIN64)
+	Sleep(msec);
+#else
+	usleep(msec * 1000);
+#endif  // _WIN32 || _WIN64
+}

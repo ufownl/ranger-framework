@@ -53,6 +53,7 @@ Mutex_debug_o = $(obj_dir_debug)/Mutex.o
 TypeInfo_debug_o = $(obj_dir_debug)/TypeInfo.o
 Coroutine_debug_o = $(obj_dir_debug)/Coroutine.o
 AtExit_debug_o = $(obj_dir_debug)/AtExit.o
+Timer_debug_o = $(obj_dir_debug)/Timer.o
 
 Allocator_release_o = $(obj_dir_release)/Allocator.o
 MemoryLeakDetector_release_o = $(obj_dir_release)/MemoryLeakDetector.o
@@ -60,9 +61,10 @@ Mutex_release_o = $(obj_dir_release)/Mutex.o
 TypeInfo_release_o = $(obj_dir_release)/TypeInfo.o
 Coroutine_release_o = $(obj_dir_release)/Coroutine.o
 AtExit_release_o = $(obj_dir_release)/AtExit.o
+Timer_release_o = $(obj_dir_release)/Timer.o
 
-obj_debug = $(Allocator_debug_o) $(MemoryLeakDetector_debug_o) $(Mutex_debug_o) $(TypeInfo_debug_o) $(Coroutine_debug_o) $(AtExit_debug_o)
-obj_release = $(Allocator_release_o) $(MemoryLeakDetector_release_o) $(Mutex_release_o) $(TypeInfo_release_o) $(Coroutine_release_o) $(AtExit_release_o)
+obj_debug = $(Allocator_debug_o) $(MemoryLeakDetector_debug_o) $(Mutex_debug_o) $(TypeInfo_debug_o) $(Coroutine_debug_o) $(AtExit_debug_o) $(Timer_debug_o)
+obj_release = $(Allocator_release_o) $(MemoryLeakDetector_release_o) $(Mutex_release_o) $(TypeInfo_release_o) $(Coroutine_release_o) $(AtExit_release_o) $(Timer_release_o)
 
 Allocator_src = Memory/Allocator.cpp
 MemoryLeakDetector_src = Memory/MemoryLeakDetector.cpp
@@ -70,6 +72,7 @@ Mutex_src = Thread/Mutex.cpp
 TypeInfo_src = Object/TypeInfo.cpp
 Coroutine_src = Thread/Coroutine.cpp
 AtExit_src = Process/AtExit.cpp
+Timer_src = System/Timer.cpp
 
 all: $(out_debug) $(out_release)
 
@@ -97,6 +100,9 @@ $(Coroutine_debug_o): $(Coroutine_src)
 $(AtExit_debug_o): $(AtExit_src)
 	$(cxx_debug)
 
+$(Timer_debug_o): $(Timer_src)
+	$(cxx_debug)
+
 $(Allocator_release_o): $(Allocator_src)
 	$(cxx_release)
 
@@ -113,6 +119,9 @@ $(Coroutine_release_o): $(Coroutine_src)
 	$(cxx_release)
 
 $(AtExit_release_o): $(AtExit_src)
+	$(cxx_release)
+
+$(Timer_release_o): $(Timer_src)
 	$(cxx_release)
 
 clean:

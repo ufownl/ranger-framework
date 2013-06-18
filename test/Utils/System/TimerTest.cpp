@@ -16,31 +16,39 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RangerFramework_RfRunnableService_H__
-#define __RangerFramework_RfRunnableService_H__
+#include <cppunit/extensions/HelperMacros.h>
+#include "System/Timer.h"
 
-#include "RfService.h"
-
-class RfRunnableService : public RfService
+class TimerTest : public CppUnit::TestFixture
 {
+	CPPUNIT_TEST_SUITE(TimerTest);
+	CPPUNIT_TEST(test);
+	CPPUNIT_TEST_SUITE_END();
+
 public:
-	RfRunnableService(long period);
-	virtual ~RfRunnableService();
+	virtual void setUp()
+	{
+	}
 
-	void run();
-	void stop();
-
-	bool isRunning();
-
-protected:
-	virtual bool onInitialize();
-	virtual bool onTick(long escape);
+	virtual void tearDown()
+	{
+	}
 
 private:
-	const long mPeriod;
-	volatile bool mIsRunning;
+	void test()
+	{
+		unsigned int t = RfClock();
+		RfSleep(1000);
+		CPPUNIT_ASSERT(RfClock() - t >= 1000);
+
+		t = RfClock();
+		RfSleep(2000);
+		CPPUNIT_ASSERT(RfClock() - t >= 2000);
+
+		t = RfClock();
+		RfSleep(3000);
+		CPPUNIT_ASSERT(RfClock() - t >= 3000);
+	}
 };
 
-DeclareSmartPointer(RfRunnableService);
-
-#endif  // __RangerFramework_RfRunnableService_H__
+CPPUNIT_TEST_SUITE_REGISTRATION(TimerTest);
