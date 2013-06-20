@@ -35,7 +35,7 @@ endef
 
 all: test
 
-test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o HierarchyGeneratorTest.o FiniteStateMachineTest.o RefObjectTest.o SmartPointerTest.o TypeInfoTest.o FactoryTest.o AbstractFactoryTest.o VisitorTest.o ObjectPoolTest.o SingletonTest.o MultimethodsTest.o TimerTest.o RfServiceTest.o RfRunnableServiceTest.o RfServiceManagerTest.o
+test: main.o ScopedLockTest.o MutexCallerTest.o ThreadPolicyTest.o CoroutineTest.o ThreadLocalStorageTest.o MemoryLeakDetectorTest.o STLAllocatorTest.o AssociateVectorTest.o InstrusiveListTest.o InstrusiveSlistTest.o RoundRobinQueueTest.o BindTest.o DummyTest.o HierarchyGeneratorTest.o FiniteStateMachineTest.o RefObjectTest.o SmartPointerTest.o TypeInfoTest.o FactoryTest.o AbstractFactoryTest.o VisitorTest.o ObjectPoolTest.o SingletonTest.o MultimethodsTest.o TimerTest.o RfServiceTest.o RfRunnableServiceTest.o RfServiceManagerTest.o BtBehaviorNodeTest.o
 	$(ld_run)
 
 main.o: main.cpp
@@ -123,6 +123,9 @@ RfRunnableServiceTest.o: Framework/RfRunnableServiceTest.cpp
 	$(cxx_run)
 
 RfServiceManagerTest.o: Framework/RfServiceManagerTest.cpp
+	$(cxx_run)
+
+BtBehaviorNodeTest.o: BehaviorTree/BtBehaviorNodeTest.cpp
 	$(cxx_run)
 
 clean:
