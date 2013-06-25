@@ -34,6 +34,7 @@ class BtCompositeNodeTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(BtCompositeNodeTest);
 	CPPUNIT_TEST(testBtSelectorNode);
+	CPPUNIT_TEST(testBtSequenceNode);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -137,6 +138,37 @@ private:
 		root = BtXmlGenerator::generate("./BehaviorTree/bt_selector_fft.xml");
 		CPPUNIT_ASSERT(root);
 		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtSequenceNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_sequence_ttt.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_sequence_ftt.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_sequence_tft.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(2), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_sequence_ttf.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
 		extra->setCount(0);
 	}
