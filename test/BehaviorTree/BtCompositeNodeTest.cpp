@@ -37,6 +37,7 @@ class BtCompositeNodeTest : public CppUnit::TestFixture
 	CPPUNIT_TEST(testBtSequenceNode);
 	CPPUNIT_TEST(testBtParallelFailOnAllNode);
 	CPPUNIT_TEST(testBtParallelSucceedOnAllNode);
+	CPPUNIT_TEST(testBtParallelHybridNode);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -233,6 +234,37 @@ private:
 		root = BtXmlGenerator::generate("./BehaviorTree/bt_soa_ttf.xml");
 		CPPUNIT_ASSERT(root);
 		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtParallelHybridNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_hybrid_2t_ttt.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_hybrid_2t_tft.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_hybrid_2f_ttf.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_hybrid_2f_ftf.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
 		extra->setCount(0);
 	}
