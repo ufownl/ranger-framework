@@ -35,6 +35,8 @@ class BtCompositeNodeTest : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE(BtCompositeNodeTest);
 	CPPUNIT_TEST(testBtSelectorNode);
 	CPPUNIT_TEST(testBtSequenceNode);
+	CPPUNIT_TEST(testBtParallelFailOnAllNode);
+	CPPUNIT_TEST(testBtParallelSucceedOnAllNode);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -167,6 +169,68 @@ private:
 		extra->setCount(0);
 
 		root = BtXmlGenerator::generate("./BehaviorTree/bt_sequence_ttf.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtParallelFailOnAllNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_foa_fff.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_foa_tff.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_foa_ftf.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_foa_fft.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtParallelSucceedOnAllNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_soa_ttt.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_soa_ftt.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_soa_tft.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_soa_ttf.xml");
 		CPPUNIT_ASSERT(root);
 		CPPUNIT_ASSERT(!root->execute(params));
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), extra->getCount());
