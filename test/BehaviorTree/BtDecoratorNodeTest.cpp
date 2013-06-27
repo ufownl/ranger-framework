@@ -18,6 +18,7 @@
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <luabind/luabind.hpp>
+#include "System/Timer.h"
 #include "BtConditionNode.h"
 #include "BtActionNode.h"
 #include "BtParams.h"
@@ -34,6 +35,10 @@ class BtDecoratorNodeTest : public CppUnit::TestFixture
 {
 	CPPUNIT_TEST_SUITE(BtDecoratorNodeTest);
 	CPPUNIT_TEST(testBtDecoratorNotNode);
+	CPPUNIT_TEST(testBtDecoratorCounterNode);
+	CPPUNIT_TEST(testBtDecoratorForNode);
+	CPPUNIT_TEST(testBtDecoratorUntilNode);
+	CPPUNIT_TEST(testBtDecoratorTimerNode);
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -121,6 +126,80 @@ private:
 
 		root = BtXmlGenerator::generate("./BehaviorTree/bt_not_f.xml");
 		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+	}
+
+	void testBtDecoratorCounterNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_counter_5_0_t.xml");
+		CPPUNIT_ASSERT(root);
+		for (int i = 0; i < 10; ++i)
+		{
+			if (i < 5)
+			{
+				CPPUNIT_ASSERT(root->execute(params));
+			}
+			else
+			{
+				CPPUNIT_ASSERT(!root->execute(params));
+			}
+		}
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(5), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtDecoratorForNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_for_10_l5.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), extra->getCount());
+		extra->setCount(0);
+		
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_for_10_l-5.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtDecoratorUntilNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+		SmartPointer<MyExtra> extra = RfNew MyExtra;
+		params->setExtraData(extra);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_until_f_10_l5.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(5), extra->getCount());
+		extra->setCount(0);
+
+		root = BtXmlGenerator::generate("./BehaviorTree/bt_until_f_10_l11.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(!root->execute(params));
+		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), extra->getCount());
+		extra->setCount(0);
+	}
+
+	void testBtDecoratorTimerNode()
+	{
+		BtParamsPtr params = RfNew BtParams(32);
+
+		BtNodePtr root = BtXmlGenerator::generate("./BehaviorTree/bt_timer_1_0_t.xml");
+		CPPUNIT_ASSERT(root);
+		CPPUNIT_ASSERT(root->execute(params));
+		RfSleep(100);
+		CPPUNIT_ASSERT(!root->execute(params));
+		RfSleep(1000);
 		CPPUNIT_ASSERT(root->execute(params));
 	}
 };
