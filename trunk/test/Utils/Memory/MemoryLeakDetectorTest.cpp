@@ -81,6 +81,20 @@ private:
 		}
 		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
 		CPPUNIT_ASSERT_EQUAL(init, state.size());
+
+		int* v0 = static_cast<int*>(Test_Alloc::allocate(sizeof(int), __FILE__, __LINE__));
+		*v0 = 10;
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
+		CPPUNIT_ASSERT_EQUAL(init + 1, state.size());
+
+		int* v1 = static_cast<int*>(Test_Alloc::reallocate(v0, sizeof(int) * 2, __FILE__, __LINE__));
+		CPPUNIT_ASSERT_EQUAL(10, *v1);
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
+		CPPUNIT_ASSERT_EQUAL(init + 1, state.size());
+
+		Test_Alloc::deallocate(v1);
+		MemoryLeakDetectorHolder::instance().checkMemoryState(state);
+		CPPUNIT_ASSERT_EQUAL(init, state.size());
 #endif  // _DEBUG
 	}
 };

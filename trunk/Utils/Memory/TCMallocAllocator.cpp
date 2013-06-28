@@ -26,7 +26,25 @@
 void* TCMallocAllocator::allocate(size_t size, const char* file, long line)
 {
 	void* p = tc_malloc(size);
-	MemoryLeakDetectorHolder::instance().onAllocate(p, size, file, line);
+
+	if (p)
+	{
+		MemoryLeakDetectorHolder::instance().onAllocate(p, size, file, line);
+	}
+
+	return p;
+}
+
+void* TCMallocAllocator::reallocate(void* old, size_t size, const char* file, long line)
+{
+	void* p = tc_realloc(old, size);
+
+	if (p)
+	{
+		MemoryLeakDetectorHolder::instance().onDeallocate(old);
+		MemoryLeakDetectorHolder::instance().onAllocate(p, size, file, line);
+	}
+
 	return p;
 }
 
@@ -41,6 +59,11 @@ void TCMallocAllocator::deallocate(void* p)
 void* TCMallocAllocator::allocate(size_t size)
 {
 	return tc_malloc(size);
+}
+
+void* TCMallocAllocator::reallocate(void* old, size_t size)
+{
+	return tc_realloc(old, size);
 }
 
 void TCMallocAllocator::deallocate(void* p)

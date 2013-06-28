@@ -25,6 +25,7 @@
 #include "Thread/ThreadLocalStorage.h"
 #endif  // !_WIN32 && !_WIN64
 #include "Process/AtExit.h"
+#include <boost/noncopyable.hpp>
 #include <stdexcept>
 
 template <class T, class _thread_policy>
@@ -77,6 +78,7 @@ template <
 class Singleton
 	: public _thread_policy<Singleton<T, _thread_policy, _storage_policy> >
 	, public _storage_policy<T, _thread_policy<Singleton<T, _thread_policy, _storage_policy> > >
+	, private boost::noncopyable
 {
 public:
 	typedef _thread_policy<Singleton<T, _thread_policy, _storage_policy> > ThreadPolicy;
@@ -117,10 +119,6 @@ public:
 	{
 		return StoragePolicy::msInstance;
 	}
-
-private:
-    Singleton(const Singleton<T>&);
-    Singleton& operator = (const Singleton<T>&);
 
 private:
 	typename ThreadPolicy::template Data<bool>::type mExcept;
