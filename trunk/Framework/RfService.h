@@ -31,7 +31,7 @@
 
 class RfServiceManager;
 
-class RfService : public RefObject<RfService_Alloc, unsigned int, SingleThread>
+class RfService : public RefObject<RfService_Alloc>
 {
 	friend class RfServiceManager;
 

@@ -31,7 +31,7 @@
 #define MyExtra_Alloc	Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-class MyExtra : public RefObject<MyExtra_Alloc, unsigned int, SingleThread>
+class MyExtra : public RefObject<MyExtra_Alloc>
 {
 public:
 	MyExtra(const std::string& msg)

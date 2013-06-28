@@ -17,7 +17,15 @@
  */
 
 #include <cppunit/extensions/HelperMacros.h>
+#include <boost/detail/atomic_count.hpp>
 #include "Object/RefObject.h"
+
+#if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
+#include "Memory/TCMallocAllocator.h"
+#define Object_Alloc	TCMallocAllocator
+#else
+#define Object_Alloc	Allocator
+#endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
 class RefObjectTest : public CppUnit::TestFixture
 {
@@ -35,7 +43,8 @@ public:
 	}
 
 private:
-	struct Object : public RefObject<>
+	template <class _counter>
+	struct Object : public RefObject<Object_Alloc, _counter>
 	{
 		Object()
 		{
@@ -47,26 +56,34 @@ private:
 			--count;
 		}
 
-		static size_t count;
+		static long count;
 	};
+
+	template <class _counter>
+	void test_impl()
+	{
+		Object<_counter>* obj = RfNew Object<_counter>;
+
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), Object<_counter>::count);
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(0), (long)obj->getRefCount());
+		obj->incRefCount();
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), (long)obj->getRefCount());
+		obj->incRefCount();
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(2), (long)obj->getRefCount());
+		obj->decRefCount();
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), (long)obj->getRefCount());
+		obj->decRefCount();
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(0), Object<_counter>::count);
+	}
 
 	void test()
 	{
-		Object* obj = RfNew Object;
-
-		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), Object::count);
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(0), obj->getRefCount());
-		obj->incRefCount();
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(1), obj->getRefCount());
-		obj->incRefCount();
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(2), obj->getRefCount());
-		obj->decRefCount();
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(1), obj->getRefCount());
-		obj->decRefCount();
-		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), Object::count);
+		test_impl<long>();
+		test_impl<boost::detail::atomic_count>();
 	}
 };
 
-size_t RefObjectTest::Object::count = 0;
+template <class _counter>
+long RefObjectTest::Object<_counter>::count = 0;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(RefObjectTest);

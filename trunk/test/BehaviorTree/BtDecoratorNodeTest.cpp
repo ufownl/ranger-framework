@@ -42,7 +42,7 @@ class BtDecoratorNodeTest : public CppUnit::TestFixture
 	CPPUNIT_TEST_SUITE_END();
 
 public:
-	class MyExtra : public RefObject<MyExtra_Alloc, unsigned int, SingleThread>
+	class MyExtra : public RefObject<MyExtra_Alloc>
 	{
 	public:
 		MyExtra()

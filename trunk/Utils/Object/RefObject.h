@@ -20,22 +20,15 @@
 #define __Utils_Object_RefObject_H__
 
 #include "Object/MemObject.h"
-#include "Thread/ThreadPolicy.h"
-#include "Thread/ScopedLock.h"
 
 template <
 	class _alloc = Allocator,
-	class _storage = unsigned int,
-	template <class> class _thread_policy = ObjectLevelLockable
+	class _counter = long
 >
 class RefObject
 	: public MemObject<_alloc>
-	, public _thread_policy<RefObject<_alloc, _storage, _thread_policy> >
 	, private boost::noncopyable
 {
-public:
-	typedef _thread_policy<RefObject<_alloc, _storage, _thread_policy> > ThreadPolicy;
-
 public:
     RefObject()
 		: mRefCount(0)
@@ -48,32 +41,24 @@ public:
 
     void incRefCount()
 	{
-		typename ThreadPolicy::Lock l(*this);
-		ScopedLock<typename ThreadPolicy::Lock> sl(l);
 		++mRefCount;
 	}
 
     void decRefCount()
 	{
-		typename ThreadPolicy::Lock l(*this);
-
-		l.lock();
 		if (--mRefCount == 0)
 		{
-			l.unlock();
 			delete this;
-			return;
 		}
-		l.unlock();
 	}
 
-    _storage getRefCount()
+    const _counter& getRefCount() const
 	{
 		return mRefCount;
 	}
 
 private:
-	typename ThreadPolicy::template Data<_storage>::type mRefCount;
+	_counter mRefCount;
 };
 
 #endif  // __Utils_Object_RefObject_H__
