@@ -123,7 +123,7 @@ private:
     Singleton& operator = (const Singleton<T>&);
 
 private:
-	bool mExcept;
+	typename ThreadPolicy::template Data<bool>::type mExcept;
 };
 
 template <class T>
