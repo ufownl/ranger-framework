@@ -27,8 +27,10 @@ class Allocator
 public:
 #ifdef _DEBUG
     static void* allocate(size_t size, const char* file, long line);
+	static void* reallocate(void* old, size_t size, const char* file, long line);
 #else
     static void* allocate(size_t size);
+	static void* reallocate(void* old, size_t size);
 #endif  // _DEBUG
 
     static void deallocate(void* p);
