@@ -58,13 +58,13 @@ private:
 		ObjectPtr p0 = RfNew Object;
 
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), Object::count);
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(1), p0->getRefCount());
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), p0->getRefCount());
 
 		ObjectPtr p1 = p0;
 
 		CPPUNIT_ASSERT_EQUAL(p1, p0);
 		CPPUNIT_ASSERT_EQUAL(p1.data(), p0.data());
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(2), p0->getRefCount());
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(2), p0->getRefCount());
 
 		boost::hash<ObjectPtr> hasher;
 		CPPUNIT_ASSERT_EQUAL(hasher(p0), hasher(p1));
@@ -74,15 +74,15 @@ private:
 
 			CPPUNIT_ASSERT_EQUAL(p2, p0);
 			CPPUNIT_ASSERT_EQUAL(p2.data(), p0.data());
-			CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(3), p0->getRefCount());
+			CPPUNIT_ASSERT_EQUAL(static_cast<long>(3), p0->getRefCount());
 		}
 
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(2), p0->getRefCount());
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(2), p0->getRefCount());
 
 		ObjectPtr p3 = RfNew Object;
 
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(2), Object::count);
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(1), p3->getRefCount());
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), p3->getRefCount());
 		CPPUNIT_ASSERT(p0 != p3);
 		CPPUNIT_ASSERT(p0.data() != p3.data());
 		CPPUNIT_ASSERT_EQUAL(p0 < p3, p0.data() < p3.data());
@@ -95,7 +95,7 @@ private:
 		
 		p1 = 0;
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), Object::count);
-		CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(1), p0->getRefCount());
+		CPPUNIT_ASSERT_EQUAL(static_cast<long>(1), p0->getRefCount());
 
 		p0 = 0;
 		CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), Object::count);

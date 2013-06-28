@@ -31,7 +31,7 @@
 #define BtParams_Alloc	Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-class BtParams : public RefObject<BtParams_Alloc, unsigned int, SingleThread>
+class BtParams : public RefObject<BtParams_Alloc>
 {
 public:
 	union BtCacheValue

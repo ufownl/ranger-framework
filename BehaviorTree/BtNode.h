@@ -67,7 +67,7 @@ typedef Visitor<
 	>
 > BtGenerator;
 
-class BtNode : public RefObject<BtNode_Alloc, unsigned int, SingleThread>
+class BtNode : public RefObject<BtNode_Alloc>
 {
 public:
 	VISITABLE_DECL_ABS(BtGenerator);
