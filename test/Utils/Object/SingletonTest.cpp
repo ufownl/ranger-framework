@@ -62,6 +62,18 @@ private:
 		CPPUNIT_ASSERT_EQUAL(&singleton_test::Mock::getSingleton(), singleton_test::Mock::getSingletonPtr());
 		CPPUNIT_ASSERT_EQUAL(singleton_test::Mock::getSingletonPtr(), &singleton_test::Mock::getSingleton());
 		CPPUNIT_ASSERT_EQUAL(singleton_test::Mock::getSingletonPtr(), singleton_test::Mock::getSingletonPtr());
+
+		try
+		{
+			singleton_test::Mock m;
+		}
+		catch (const std::logic_error& e)
+		{
+			CPPUNIT_ASSERT_EQUAL(&singleton_test::gsMock, singleton_test::Mock::getSingletonPtr());
+			return;
+		}
+
+		CPPUNIT_ASSERT(false);
 	}
 
 	void testSingletonHolder()
