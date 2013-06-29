@@ -55,7 +55,7 @@ public:
 
 		if (it == mCallbacks.end())
 		{
-			throw std::runtime_error("Function not found.");
+			throw std::invalid_argument("Function not found.");
 		}
 
 		return it->second;
@@ -122,7 +122,7 @@ public:
 			ScopedLock<typename ThreadPolicy::Lock> sl(l);
 			return StoragePolicy::get(id)();
 		}
-		catch (std::runtime_error&)
+		catch (std::invalid_argument&)
 		{
 			return 0;
 		}
@@ -161,7 +161,7 @@ public:
 		{	\
 			if (!mCallbacks[id].regist)	\
 			{	\
-				throw std::runtime_error("Function not found.");	\
+				throw std::invalid_argument("Function not found.");	\
 			}	\
 			return mCallbacks[id].creator;	\
 		}	\

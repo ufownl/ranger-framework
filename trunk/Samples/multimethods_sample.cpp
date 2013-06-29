@@ -250,7 +250,7 @@ void basic_fn_dispatcher_sample()
 			{
 				disp.dispatch(l, r);
 			}
-			catch (std::runtime_error& e)
+			catch (std::invalid_argument& e)
 			{
 				puts(e.what());
 			}
@@ -259,7 +259,7 @@ void basic_fn_dispatcher_sample()
 			{
 				symm.dispatch(l, r);
 			}
-			catch (std::runtime_error& e)
+			catch (std::invalid_argument& e)
 			{
 				puts(e.what());
 			}
@@ -326,7 +326,7 @@ void basic_functor_dispatcher_sample()
 			{
 				disp.dispatch(l, r);
 			}
-			catch (std::runtime_error& e)
+			catch (std::invalid_argument& e)
 			{
 				puts(e.what());
 			}
@@ -335,7 +335,7 @@ void basic_functor_dispatcher_sample()
 			{
 				symm.dispatch(l, r);
 			}
-			catch (std::runtime_error& e)
+			catch (std::invalid_argument& e)
 			{
 				puts(e.what());
 			}
