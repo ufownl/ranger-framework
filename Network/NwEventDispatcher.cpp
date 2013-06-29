@@ -37,6 +37,11 @@ NwEventDispatcher::NwEventDispatcher(int cpus /* = 0 */)
 
 	event_config* cfg = event_config_new();
 
+	if (!cfg)
+	{
+		throw std::runtime_error("event_config creation failed.");
+	}
+
 #if defined(_WIN32) || defined(_WIN64)
 	if (cpus > 0)
 	{
