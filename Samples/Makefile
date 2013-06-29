@@ -21,11 +21,12 @@ ld = g++
 Utils_dir = ../Utils
 Framework_dir = ../Framework
 BehTree_dir = ../BehaviorTree
+Network_dir = ../Network
 
-cflags_debug = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir)
-cflags_release = -O2 -Wall -DNDEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir)
-ldflags_debug = -L../lib -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
-ldflags_release = -L../lib -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lpthread
+cflags_debug = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
+cflags_release = -O2 -Wall -DNDEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
+ldflags_debug = -L../lib -lNetwork_debug -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
+ldflags_release = -L../lib -lNetwork -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lpthread
 
 define cxx_debug
 $(cxx) -c $(cflags_debug) $^ -o $@
@@ -43,8 +44,8 @@ define ld_release
 $(ld) $^ $(ldflags_release) -o $@
 endef
 
-out_debug = multimethods_sample_debug factory_sample_debug visitor_sample_debug fsm_sample_debug coroutine_sample_debug framework_sample_debug bt_sample_debug
-out_release = multimethods_sample factory_sample visitor_sample fsm_sample coroutine_sample framework_sample bt_sample
+out_debug = multimethods_sample_debug factory_sample_debug visitor_sample_debug fsm_sample_debug coroutine_sample_debug framework_sample_debug bt_sample_debug network_sample_debug
+out_release = multimethods_sample factory_sample visitor_sample fsm_sample coroutine_sample framework_sample bt_sample network_sample
 
 all: $(out_debug) $(out_release)
 
@@ -69,6 +70,9 @@ framework_sample_debug: framework_sample_debug.o
 bt_sample_debug: bt_sample_debug.o
 	$(ld_debug)
 
+network_sample_debug: network_sample_debug.o
+	$(ld_debug)
+
 multimethods_sample_debug.o: multimethods_sample.cpp
 	$(cxx_debug)
 
@@ -88,6 +92,9 @@ framework_sample_debug.o: framework_sample.cpp
 	$(cxx_debug)
 
 bt_sample_debug.o: bt_sample.cpp
+	$(cxx_debug)
+
+network_sample_debug.o: network_sample.cpp
 	$(cxx_debug)
 
 multimethods_sample: multimethods_sample.o
@@ -111,6 +118,9 @@ framework_sample: framework_sample.o
 bt_sample: bt_sample.o
 	$(ld_release)
 
+network_sample: network_sample.o
+	$(ld_release)
+
 multimethods_sample.o: multimethods_sample.cpp
 	$(cxx_release)
 
@@ -130,6 +140,9 @@ framework_sample.o: framework_sample.cpp
 	$(cxx_release)
 
 bt_sample.o: bt_sample.cpp
+	$(cxx_release)
+
+network_sample.o: network_sample.cpp
 	$(cxx_release)
 
 clean:
