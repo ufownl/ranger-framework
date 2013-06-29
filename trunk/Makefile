@@ -15,7 +15,7 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
-all: Prepare Utils Framework BehaviorTree Samples test
+all: Prepare Utils Framework BehaviorTree Network Samples test
 
 Prepare:
 	mkdir -p lib
@@ -31,6 +31,9 @@ Framework:
 BehaviorTree:
 	make -C BehaviorTree
 
+Network:
+	make -C Network
+
 Samples:
 	make -C Samples
 
@@ -40,6 +43,7 @@ test:
 clean:
 	make -C test clean
 	make -C Samples clean
+	make -C Network clean
 	make -C BehaviorTree clean
 	make -C Framework clean
 	make -C Utils clean
@@ -48,4 +52,4 @@ clean:
 	-rmdir obj/release
 	-rmdir obj
 
-.PHONY: all Prepare Utils Framework BehaviorTree Samples test clean
+.PHONY: all Prepare Utils Framework BehaviorTree Network Samples test clean
