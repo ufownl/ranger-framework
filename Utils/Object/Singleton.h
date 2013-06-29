@@ -94,7 +94,7 @@ public:
 		if (StoragePolicy::msInstance)
 		{
 			mExcept = true;
-			throw std::runtime_error("Singleton has been created.");
+			throw std::logic_error("Singleton has been created.");
 		}
 
 		StoragePolicy::msInstance = static_cast<T*>(this);
@@ -121,7 +121,7 @@ public:
 	}
 
 private:
-	typename ThreadPolicy::template Data<bool>::type mExcept;
+	bool mExcept;
 };
 
 template <class T>

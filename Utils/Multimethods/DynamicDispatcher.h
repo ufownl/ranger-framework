@@ -47,7 +47,7 @@ struct ThrowExceptionHandler
 {
 	static _result onError(_lhs_base&, _rhs_base&)
 	{
-		throw std::runtime_error("Function not found.");
+		throw std::invalid_argument("Function not found.");
 	}
 };
 
