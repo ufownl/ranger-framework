@@ -111,11 +111,13 @@ NwConnection::NwConnection(bufferevent* bev, NwMessageFilter* filter, NwEventHan
 
 	if (!filter)
 	{
+		bufferevent_free(bev);
 		throw std::invalid_argument("Invalid filter.");
 	}
 
 	if (!handler)
 	{
+		bufferevent_free(bev);
 		throw std::invalid_argument("Invalid handler.");
 	}
 
@@ -128,6 +130,7 @@ NwConnection::NwConnection(bufferevent* bev, NwMessageFilter* filter, NwEventHan
 
 	if (!mBackend.filter)
 	{
+		bufferevent_free(bev);
 		throw std::runtime_error("Backend filter creation failed.");
 	}
 
