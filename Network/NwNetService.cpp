@@ -32,14 +32,6 @@
 static void event_cb(bufferevent* bev, short events, void* ctx)
 {
 	NwNetService* service = static_cast<NwNetService*>(ctx);
-	
-	if (events & BEV_EVENT_CONNECTED)
-	{
-		NwConnectionPtr conn = RfNew NwConnection(
-			bev, service->factory()->create<NwMessageFilter>(), service->handler());
-		service->handler()->onConnect(conn);
-		return;
-	}
 
 	if (events & BEV_EVENT_ERROR)
 	{
@@ -67,6 +59,14 @@ static void event_cb(bufferevent* bev, short events, void* ctx)
 	{
 		bufferevent_free(bev);
 		service->handler()->onEof(0);
+		return;
+	}
+
+	if (events & BEV_EVENT_CONNECTED)
+	{
+		NwConnectionPtr conn = RfNew NwConnection(
+			bev, service->factory()->create<NwMessageFilter>(), service->handler());
+		service->handler()->onConnect(conn);
 		return;
 	}
 }
