@@ -192,18 +192,21 @@ public:
 		}
 	}
 
-	virtual void onError(NwConnection* conn, const char* error)
+	virtual void onError(NwConnection* conn, const char* err)
 	{
+		printf("DisplayClient error: %s\n", err);
 		mConn = 0;
 	}
 
 	virtual void onTimeout(NwConnection* conn)
 	{
+		puts("DisplayClient timeout.");
 		mConn = 0;
 	}
 
 	virtual void onEof(NwConnection* conn)
 	{
+		puts("DisplayClient eof.");
 		mConn = 0;
 	}
 
