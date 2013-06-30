@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
 	DisplayClientPtr client = RfNew DisplayClient;
 	NwNetServicePtr cnet = RfNew NwNetService(dispatcher, createNwMessageFilterFactory<SampleFilter>(), client);
 
-	if (!cnet->connect("localhost", port))
+	if (!cnet->connect("127.0.0.1", port))
 	{
 		return -1;
 	}
