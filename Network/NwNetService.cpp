@@ -64,8 +64,19 @@ static void event_cb(bufferevent* bev, short events, void* ctx)
 
 	if (events & BEV_EVENT_CONNECTED)
 	{
-		NwConnectionPtr conn = RfNew NwConnection(
-			bev, service->factory()->create<NwMessageFilter>(), service->handler());
+		NwConnectionPtr conn;
+		NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
+
+		try
+		{
+			conn = RfNew NwConnection(bev, filter, service->handler());
+		}
+		catch (const std::bad_alloc& e)
+		{
+			bufferevent_free(bev);
+			throw e;
+		}
+
 		service->handler()->onConnect(conn);
 		return;
 	}
@@ -163,7 +174,15 @@ NwListener* NwNetService::listen(const char* ip, int port, int backlog /* = -1 *
 		return 0;
 	}
 
-	return RfNew NwListener(listener);
+	try
+	{
+		return RfNew NwListener(listener);
+	}
+	catch (const std::bad_alloc& e)
+	{
+		evconnlistener_free(listener);
+		return 0;
+	}
 }
 
 NwEventDispatcher* NwNetService::dispatcher() const
