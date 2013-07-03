@@ -25,8 +25,8 @@ Network_dir = ../Network
 
 cflags_debug = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
 cflags_release = -O2 -Wall -DNDEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
-ldflags_debug = -L../lib -lNetwork_debug -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
-ldflags_release = -L../lib -lNetwork -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lpthread
+ldflags_debug = -L../lib -lNetwork_debug -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lrt -lpthread
+ldflags_release = -L../lib -lNetwork -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lrt -lpthread
 
 define cxx_debug
 $(cxx) -c $(cflags_debug) $^ -o $@

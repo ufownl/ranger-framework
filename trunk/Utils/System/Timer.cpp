@@ -18,16 +18,23 @@
 
 #include "System/Timer.h"
 #if defined(_WIN32) || defined(_WIN64)
-#include "Windows.h"
+#include <Windows.h>
+#elif defined(__linux__)
+#include <time.h>
+#include <unistd.h>
 #else
-#include "unistd.h"
-#include "sys/time.h"
+#include <unistd.h>
+#include <sys/time.h>
 #endif  // _WIN32 || _WIN64
 
 unsigned int RfClock()
 {
 #if defined(_WIN32) || defined(_WIN64)
 	return GetTickCount();
+#elif defined(__linux__)
+	timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 #else
 	struct timeval tv;
 	gettimeofday(&tv, 0);

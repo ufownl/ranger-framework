@@ -23,7 +23,7 @@ Framework_dir = ../Framework
 BehTree_dir = ../BehaviorTree
 
 cflags = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir)
-ldflags = -L../lib -lcppunit -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
+ldflags = -L../lib -lcppunit -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lrt -lpthread
 
 define cxx_run
 $(cxx) -c $(cflags) $^ -o $@
