@@ -15,6 +15,8 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
+plat = linux
+
 cxx = g++
 ld = g++
 
@@ -25,8 +27,13 @@ obj_dir_release = $(obj_dir)/release
 
 cflags_debug = -g -fPIC -Wall -D_DEBUG -I.
 cflags_release = -O2 -fPIC -Wall -DNDEBUG -I.
+ifeq ($(plat), linux)
 ldflags_debug = -ldl -lrt -lpthread
 ldflags_release = -ldl -lrt -lpthread
+else
+ldflags_debug = -ldl -lpthread
+ldflags_release = -ldl -lpthread
+endif
 
 define cxx_debug
 $(cxx) -c $(cflags_debug) $^ -o $@

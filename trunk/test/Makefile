@@ -15,6 +15,8 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
+plat = linux
+
 cxx = g++
 ld = g++
 
@@ -23,7 +25,11 @@ Framework_dir = ../Framework
 BehTree_dir = ../BehaviorTree
 
 cflags = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir)
+ifeq ($(plat), linux)
 ldflags = -L../lib -lcppunit -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lrt -lpthread
+else
+ldflags = -L../lib -lcppunit -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
+endif
 
 define cxx_run
 $(cxx) -c $(cflags) $^ -o $@

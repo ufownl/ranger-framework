@@ -15,6 +15,8 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
+plat = linux
+
 cxx = g++
 ld = g++
 
@@ -25,8 +27,13 @@ Network_dir = ../Network
 
 cflags_debug = -g -Wall -D_DEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
 cflags_release = -O2 -Wall -DNDEBUG -I$(Utils_dir) -I$(Framework_dir) -I$(BehTree_dir) -I$(Network_dir)
+ifeq ($(plat), linux)
 ldflags_debug = -L../lib -lNetwork_debug -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lrt -lpthread
 ldflags_release = -L../lib -lNetwork -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lrt -lpthread
+else
+ldflags_debug = -L../lib -lNetwork_debug -lBehaviorTree_debug -lFramework_debug -lUtils_debug -lluabind -llua -ldl -lpthread
+ldflags_release = -L../lib -lNetwork -lBehaviorTree -lFramework -lUtils -lluabind -llua -ldl -lpthread
+endif
 
 define cxx_debug
 $(cxx) -c $(cflags_debug) $^ -o $@
