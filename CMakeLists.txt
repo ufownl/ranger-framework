@@ -15,41 +15,13 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
-all: Prepare Utils Framework BehaviorTree Network Samples test
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-Prepare:
-	mkdir -p lib
-	mkdir -p obj/debug
-	mkdir -p obj/release
+PROJECT(RANGER)
 
-Utils:
-	make -C Utils
-
-Framework:
-	make -C Framework
-
-BehaviorTree:
-	make -C BehaviorTree
-
-Network:
-	make -C Network
-
-Samples:
-	make -C Samples
-
-test:
-	make -C test
-
-clean:
-	make -C test clean
-	make -C Samples clean
-	make -C Network clean
-	make -C BehaviorTree clean
-	make -C Framework clean
-	make -C Utils clean
-	-rmdir lib
-	-rmdir obj/debug
-	-rmdir obj/release
-	-rmdir obj
-
-.PHONY: all Prepare Utils Framework BehaviorTree Network Samples test clean
+ADD_SUBDIRECTORY(Utils)
+ADD_SUBDIRECTORY(Framework)
+ADD_SUBDIRECTORY(BehaviorTree)
+ADD_SUBDIRECTORY(Network)
+ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(Samples)
