@@ -55,7 +55,11 @@ ADD_LIBRARY(Network SHARED
 
 ADD_DEPENDENCIES(Network Utils)
 
-TARGET_LINK_LIBRARIES(Network Utils event_core event_pthreads)
+IF(WIN32)
+	TARGET_LINK_LIBRARIES(Network Utils event_core)
+ELSE(WIN32)
+	TARGET_LINK_LIBRARIES(Network Utils event_core event_pthreads)
+ENDIF(WIN32)
 
 INSTALL(TARGETS Network DESTINATION lib)
 INSTALL(FILES ${Network_HEADERS} DESTINATION include)

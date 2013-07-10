@@ -99,12 +99,4 @@ ADD_EXECUTABLE(test
 
 ADD_DEPENDENCIES(test Utils Framework BehaviorTree)
 
-IF(WIN32)
-	TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils luabind lua)
-ELSE(WIN32)
-	IF(APPLE)
-		TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils luabind lua dl pthread)
-	ELSE(APPLE)
-		TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils luabind lua dl rt pthread)
-	ENDIF(APPLE)
-ENDIF(WIN32)
+TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils)
