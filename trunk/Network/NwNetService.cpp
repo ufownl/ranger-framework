@@ -70,9 +70,7 @@ static void event_cb(bufferevent* bev, short events, void* ctx)
 
 			try
 			{
-				NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
-
-				conn = RfNew NwConnection(filter, service->handler());
+				conn = RfNew NwConnection(service->handler());
 				if (!conn->initialize(bev))
 				{
 					fputs("NwConnection initialization failed.", stderr);
@@ -83,6 +81,17 @@ static void event_cb(bufferevent* bev, short events, void* ctx)
 			{
 				bufferevent_free(bev);
 				throw e;
+			}
+
+			const NwNetService::NwMessageFilterFactoryList& factories = service->factories();
+
+			for (NwNetService::NwMessageFilterFactoryList::const_iterator i = factories.begin(); i != factories.end(); ++i)
+			{
+				if (!conn->addFilter((*i)->create<NwMessageFilter>()))
+				{
+					fputs("NwConnection filter addition failed.", stderr);
+					return;
+				}
 			}
 
 			service->handler()->onConnect(conn);
@@ -120,9 +129,7 @@ static void accept_cb(evconnlistener* listener, evutil_socket_t fd, sockaddr* ad
 
 		try
 		{
-			NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
-
-			conn = RfNew NwConnection(filter, service->handler());
+			conn = RfNew NwConnection(service->handler());
 			if (!conn->initialize(bev))
 			{
 				fputs("NwConnection initialization failed.", stderr);
@@ -133,6 +140,17 @@ static void accept_cb(evconnlistener* listener, evutil_socket_t fd, sockaddr* ad
 		{
 			bufferevent_free(bev);
 			throw e;
+		}
+
+		const NwNetService::NwMessageFilterFactoryList& factories = service->factories();
+
+		for (NwNetService::NwMessageFilterFactoryList::const_iterator i = factories.begin(); i != factories.end(); ++i)
+		{
+			if (!conn->addFilter((*i)->create<NwMessageFilter>()))
+			{
+				fputs("NwConnection filter addition failed.", stderr);
+				return;
+			}
 		}
 
 		service->handler()->onAccept(conn);
@@ -151,19 +169,13 @@ static void accept_cb(evconnlistener* listener, evutil_socket_t fd, sockaddr* ad
 	}
 }
 
-NwNetService::NwNetService(NwEventDispatcher* dispatcher, NwMessageFilterFactory* factory, NwEventHandler* handler)
+NwNetService::NwNetService(NwEventDispatcher* dispatcher, NwEventHandler* handler)
 	: mDispatcher(dispatcher)
-	, mFactory(factory)
 	, mHandler(handler)
 {
 	if (!dispatcher)
 	{
 		throw std::invalid_argument("Invalid dispatcher.");
-	}
-
-	if (!factory)
-	{
-		throw std::invalid_argument("Invalid factory.");
 	}
 
 	if (!handler)
@@ -174,6 +186,11 @@ NwNetService::NwNetService(NwEventDispatcher* dispatcher, NwMessageFilterFactory
 
 NwNetService::~NwNetService()
 {
+}
+
+void NwNetService::addFilterFactory(NwMessageFilterFactoryPtr factory)
+{
+	mFactories.push_back(factory);
 }
 
 bool NwNetService::connect(const char* addr, int port)
@@ -249,12 +266,12 @@ NwEventDispatcher* NwNetService::dispatcher() const
 	return mDispatcher;
 }
 
-NwMessageFilterFactory* NwNetService::factory() const
-{
-	return mFactory;
-}
-
 NwEventHandler* NwNetService::handler() const
 {
 	return mHandler;
+}
+
+const NwNetService::NwMessageFilterFactoryList& NwNetService::factories() const
+{
+	return mFactories;
 }

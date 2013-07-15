@@ -28,11 +28,19 @@
 #include <stdio.h>
 #include <string.h>
 
+template <int N>
 class SampleFilter : public NwMessageFilter
 {
 public:
+	virtual result encode(NwBufferBase* src, NwBufferBase* dst)
+	{
+		printf("SampleFilter<%d>::encode\n", N);
+		return dst->append(src) ? eOK : eERROR;
+	}
+
 	virtual result decode(NwBufferBase* src, NwBufferBase* dst)
 	{
+		printf("SampleFilter<%d>::decode\n", N);
 		return dst->append(src) ? eOK : eERROR;
 	}
 };
@@ -244,10 +252,16 @@ int main(int argc, char* argv[])
 	NwEventDispatcherPtr dispatcher = RfNew NwEventDispatcher;
 #endif  // _WIN32 || _WIN64
 	ChatServerPtr server = RfNew ChatServer(dispatcher);
-	NwNetServicePtr snet = RfNew NwNetService(dispatcher, createNwMessageFilterFactory<SampleFilter>(), server);
+	NwNetServicePtr snet = RfNew NwNetService(dispatcher, server);
+	
+	snet->addFilterFactory(createNwMessageFilterFactory<SampleFilter<0> >());
+	snet->addFilterFactory(createNwMessageFilterFactory<SampleFilter<1> >());
+	snet->addFilterFactory(createNwMessageFilterFactory<SampleFilter<2> >());
+
 	NwListenerPtr listener = snet->listen(0, port);
+
 	DisplayClientPtr client = RfNew DisplayClient;
-	NwNetServicePtr cnet = RfNew NwNetService(dispatcher, createNwMessageFilterFactory<SampleFilter>(), client);
+	NwNetServicePtr cnet = RfNew NwNetService(dispatcher, client);
 
 	if (!cnet->connect("127.0.0.1", port))
 	{
