@@ -22,6 +22,7 @@
 #include "NwEventHandler.h"
 #include "NwBufferBase.h"
 #include <stdexcept>
+#include <stdio.h>
 #if !defined(_WIN32) && !defined(_WIN64)
 #include <arpa/inet.h>
 #include <errno.h>
@@ -30,16 +31,34 @@
 static bufferevent_filter_result filter_input_cb(
 	evbuffer* source, evbuffer* destination, ev_ssize_t limit, bufferevent_flush_mode mode, void *ctx)
 {
-	NwBufferBasePtr src = RfNew NwBufferBase(source);
-	NwBufferBasePtr dst = RfNew NwBufferBase(destination);
-
-	switch (static_cast<NwConnection*>(ctx)->filter()->decode(src, dst))
+	try
 	{
-	case NwMessageFilter::eOK:
-		return BEV_OK;
-	case NwMessageFilter::eMORE:
-		return BEV_NEED_MORE;
-	default:
+		NwBufferBasePtr src = RfNew NwBufferBase(source);
+		NwBufferBasePtr dst = RfNew NwBufferBase(destination);
+
+		switch (static_cast<NwConnection*>(ctx)->filter()->decode(src, dst))
+		{
+		case NwMessageFilter::eOK:
+			return BEV_OK;
+		case NwMessageFilter::eMORE:
+			return BEV_NEED_MORE;
+		default:
+			return BEV_ERROR;
+		}
+	}
+	catch (const std::invalid_argument& e)
+	{
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
+		return BEV_ERROR;
+	}
+	catch (const std::bad_alloc& e)
+	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
+		return BEV_ERROR;
+	}
+	catch (const std::exception& e)
+	{
+		fprintf(stderr, "exception: %s\n", e.what());
 		return BEV_ERROR;
 	}
 }
@@ -47,129 +66,133 @@ static bufferevent_filter_result filter_input_cb(
 static bufferevent_filter_result filter_output_cb(
 	evbuffer* source, evbuffer* destination, ev_ssize_t limit, bufferevent_flush_mode mode, void *ctx)
 {
-	NwBufferBasePtr src = RfNew NwBufferBase(source);
-	NwBufferBasePtr dst = RfNew NwBufferBase(destination);
-
-	switch (static_cast<NwConnection*>(ctx)->filter()->encode(src, dst))
+	try
 	{
-	case NwMessageFilter::eOK:
-		return BEV_OK;
-	case NwMessageFilter::eMORE:
-		return BEV_NEED_MORE;
-	default:
+		NwBufferBasePtr src = RfNew NwBufferBase(source);
+		NwBufferBasePtr dst = RfNew NwBufferBase(destination);
+
+		switch (static_cast<NwConnection*>(ctx)->filter()->encode(src, dst))
+		{
+		case NwMessageFilter::eOK:
+			return BEV_OK;
+		case NwMessageFilter::eMORE:
+			return BEV_NEED_MORE;
+		default:
+			return BEV_ERROR;
+		}
+	}
+	catch (const std::invalid_argument& e)
+	{
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
+		return BEV_ERROR;
+	}
+	catch (const std::bad_alloc& e)
+	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
+		return BEV_ERROR;
+	}
+	catch (const std::exception& e)
+	{
+		fprintf(stderr, "exception: %s\n", e.what());
 		return BEV_ERROR;
 	}
 }
 
 static void read_cb(bufferevent* bev, void* ctx)
 {
-	NwConnectionPtr conn = static_cast<NwConnection*>(ctx);
-	NwBufferBasePtr buf = RfNew NwBufferBase(bufferevent_get_input(bev));
-	conn->handler()->onRead(conn, buf);
+	try
+	{
+		NwConnectionPtr conn = static_cast<NwConnection*>(ctx);
+		NwBufferBasePtr buf = RfNew NwBufferBase(bufferevent_get_input(bev));
+		conn->handler()->onRead(conn, buf);
+	}
+	catch (const std::invalid_argument& e)
+	{
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
+	}
+	catch (const std::bad_alloc& e)
+	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
+	}
+	catch (const std::exception& e)
+	{
+		fprintf(stderr, "exception: %s\n", e.what());
+	}
 }
 
 static void event_cb(bufferevent* bev, short events, void* ctx)
 {
-	NwConnectionPtr conn = static_cast<NwConnection*>(ctx);
-
-	if (events & BEV_EVENT_ERROR)
+	try
 	{
-		int errcode = EVUTIL_SOCKET_ERROR();
-		const char* err = "No error.";
+		NwConnectionPtr conn = static_cast<NwConnection*>(ctx);
 
-		if (errcode)
+		if (events & BEV_EVENT_ERROR)
 		{
-			err = evutil_socket_error_to_string(errcode);
+			int errcode = EVUTIL_SOCKET_ERROR();
+			const char* err = "No error.";
+
+			if (errcode)
+			{
+				err = evutil_socket_error_to_string(errcode);
+			}
+
+			conn->handler()->onError(conn, err);
+			return;
 		}
 
-		conn->handler()->onError(conn, err);
-		return;
+		if (events & BEV_EVENT_TIMEOUT)
+		{
+			conn->handler()->onTimeout(conn);
+			return;
+		}
+
+		if (events & BEV_EVENT_EOF)
+		{
+			conn->handler()->onEof(conn);
+			return;
+		}
 	}
-
-	if (events & BEV_EVENT_TIMEOUT)
+	catch (const std::invalid_argument& e)
 	{
-		conn->handler()->onTimeout(conn);
-		return;
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
 	}
-
-	if (events & BEV_EVENT_EOF)
+	catch (const std::bad_alloc& e)
 	{
-		conn->handler()->onEof(conn);
-		return;
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
 	}
-}
-
-NwConnection::NwConnection(bufferevent* bev, NwMessageFilter* filter, NwEventHandler* handler)
-	: mFilter(filter)
-	, mHandler(handler)
-	, mExtra(0)
-{
-	if (!bev)
+	catch (const std::exception& e)
 	{
-		throw std::invalid_argument("Invalid bev.");
-	}
-
-	if (!filter)
-	{
-		bufferevent_free(bev);
-		throw std::invalid_argument("Invalid filter.");
-	}
-
-	if (!handler)
-	{
-		bufferevent_free(bev);
-		throw std::invalid_argument("Invalid handler.");
-	}
-
-	mBackend.backend = bev;
-	mBackend.filter = bufferevent_filter_new(
-		bev, filter_input_cb, filter_output_cb,
-		BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS,
-		0, this);
-	mBackend.rate = 0;
-
-	if (!mBackend.filter)
-	{
-		bufferevent_free(bev);
-		throw std::runtime_error("Backend filter creation failed.");
-	}
-
-	bufferevent_setcb(mBackend.filter, read_cb, 0, event_cb, this);
-	bufferevent_enable(mBackend.filter, EV_READ | EV_WRITE);
-
-	sockaddr_in addr;
-	socklen_t len = sizeof(addr);
-
-	getpeername(bufferevent_getfd(bev), (sockaddr*)&addr, &len);
-	mIP = inet_ntoa(addr.sin_addr);
-	mPort = ntohs(addr.sin_port);
-}
-
-NwConnection::~NwConnection()
-{
-	if (mBackend.filter)
-	{
-		bufferevent_free(mBackend.filter);
-	}
-
-	if (mBackend.rate)
-	{
-		ev_token_bucket_cfg_free(mBackend.rate);
+		fprintf(stderr, "exception: %s\n", e.what());
 	}
 }
 
 bool NwConnection::write(const void* data, size_t len)
 {
-	return bufferevent_write(mBackend.filter, data, len) == 0;
+	if (!mBackend.frontend)
+	{
+		return false;
+	}
+
+	return bufferevent_write(mBackend.frontend, data, len) == 0;
 }
 
 bool NwConnection::write(NwBufferBase* buf)
 {
-	return bufferevent_write_buffer(mBackend.filter, buf->backend()) == 0;
+	if (!mBackend.frontend)
+	{
+		return false;
+	}
+	
+	return bufferevent_write_buffer(mBackend.frontend, buf->backend()) == 0;
 }
 
-void NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb)
+bool NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb)
 {
+	if (!mBackend.backend)
+	{
+		return false;
+	}
+
 	if (mBackend.rate)
 	{
 		bufferevent_set_rate_limit(mBackend.backend, 0);
@@ -178,14 +201,22 @@ void NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb)
 
 	mBackend.rate = ev_token_bucket_cfg_new(rr, rb, wr, wb, 0);
 
-	if (mBackend.rate)
+	if (!mBackend.rate)
 	{
-		bufferevent_set_rate_limit(mBackend.backend, mBackend.rate);
+		return false;
 	}
+
+	bufferevent_set_rate_limit(mBackend.backend, mBackend.rate);
+	return true;
 }
 
-void NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb, float sec)
+bool NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb, float sec)
 {
+	if (!mBackend.backend)
+	{
+		return false;
+	}
+
 	if (mBackend.rate)
 	{
 		bufferevent_set_rate_limit(mBackend.backend, 0);
@@ -199,19 +230,32 @@ void NwConnection::setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb, floa
 
 	mBackend.rate = ev_token_bucket_cfg_new(rr, rb, wr, wb, &tv);
 
-	if (mBackend.rate)
+	if (!mBackend.rate)
 	{
-		bufferevent_set_rate_limit(mBackend.backend, mBackend.rate);
+		return false;
 	}
+
+	bufferevent_set_rate_limit(mBackend.backend, mBackend.rate);
+	return true;
 }
 
-int NwConnection::getReadLimit() const
+size_t NwConnection::getReadLimit() const
 {
+	if (!mBackend.backend)
+	{
+		return EV_SSIZE_MAX;
+	}
+
 	return bufferevent_get_read_limit(mBackend.backend);
 }
 
-int NwConnection::getWriteLimit() const
+size_t NwConnection::getWriteLimit() const
 {
+	if (!mBackend.backend)
+	{
+		return EV_SSIZE_MAX;
+	}
+
 	return bufferevent_get_write_limit(mBackend.backend);
 }
 
@@ -233,6 +277,69 @@ void NwConnection::setExtraData(void* extra)
 void* NwConnection::getExtraData() const
 {
 	return mExtra;
+}
+
+NwConnection::NwConnection(NwMessageFilter* filter, NwEventHandler* handler)
+	: mFilter(filter)
+	, mHandler(handler)
+	, mPort(0)
+	, mExtra(0)
+{
+	mBackend.backend = 0;
+	mBackend.frontend = 0;
+	mBackend.rate = 0;
+}
+
+NwConnection::~NwConnection()
+{
+	if (mBackend.frontend)
+	{
+		bufferevent_free(mBackend.frontend);
+	}
+
+	if (mBackend.rate)
+	{
+		ev_token_bucket_cfg_free(mBackend.rate);
+	}
+}
+
+bool NwConnection::initialize(bufferevent* bev)
+{
+	if (!bev)
+	{
+		return false;
+	}
+
+	if (!mFilter || !mHandler)
+	{
+		bufferevent_free(bev);
+		return false;
+	}
+	
+	mBackend.backend = bev;
+	mBackend.frontend = bufferevent_filter_new(
+		bev, filter_input_cb, filter_output_cb,
+		BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS,
+		0, this);
+	mBackend.rate = 0;
+
+	if (!mBackend.frontend)
+	{
+		bufferevent_free(bev);
+		return false;
+	}
+
+	bufferevent_setcb(mBackend.frontend, read_cb, 0, event_cb, this);
+	bufferevent_enable(mBackend.frontend, EV_READ | EV_WRITE);
+
+	sockaddr_in addr;
+	socklen_t len = sizeof(addr);
+
+	getpeername(bufferevent_getfd(bev), (sockaddr*)&addr, &len);
+	mIP = inet_ntoa(addr.sin_addr);
+	mPort = ntohs(addr.sin_port);
+
+	return true;
 }
 
 const NwConnection::Backend* NwConnection::backend() const

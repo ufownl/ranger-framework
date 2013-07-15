@@ -20,19 +20,6 @@
 #include "NwBufferBase.h"
 #include <stdexcept>
 
-NwBufferBase::NwBufferBase(evbuffer* evbuf)
-	: mBackend(evbuf)
-{
-	if (!evbuf)
-	{
-		throw std::invalid_argument("Invalid evbuf.");
-	}
-}
-
-NwBufferBase::~NwBufferBase()
-{
-}
-
 bool NwBufferBase::append(const void* data, size_t len)
 {
 	return evbuffer_add(mBackend, data, len) == 0;
@@ -116,6 +103,19 @@ int NwBufferBase::search(void* src, size_t len, int pos) const
 size_t NwBufferBase::size() const
 {
 	return evbuffer_get_length(mBackend);
+}
+
+NwBufferBase::NwBufferBase(evbuffer* evbuf)
+	: mBackend(evbuf)
+{
+	if (!evbuf)
+	{
+		throw std::invalid_argument("Invalid evbuf.");
+	}
+}
+
+NwBufferBase::~NwBufferBase()
+{
 }
 
 evbuffer* NwBufferBase::backend() const

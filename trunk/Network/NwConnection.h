@@ -41,22 +41,19 @@ public:
 	struct Backend
 	{
 		bufferevent* backend;
-		bufferevent* filter;
+		bufferevent* frontend;
 		ev_token_bucket_cfg* rate;
 	};
 
 public:
-	NwConnection(bufferevent* bev, NwMessageFilter* filter, NwEventHandler* handler);
-	virtual ~NwConnection();
-
 	bool write(const void* data, size_t len);
 	bool write(NwBufferBase* buf);
 
-	void setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb);
-	void setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb, float sec);
+	bool setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb);
+	bool setRateLimit(size_t rr, size_t rb, size_t wr, size_t wb, float sec);
 
-	int getReadLimit() const;
-	int getWriteLimit() const;
+	size_t getReadLimit() const;
+	size_t getWriteLimit() const;
 
 	const char* getPeerIP() const;
 	int getPeerPort() const;
@@ -64,6 +61,12 @@ public:
 	void setExtraData(void* extra);
 	void* getExtraData() const;
 
+	// Internal functions
+	NwConnection(NwMessageFilter* filter, NwEventHandler* handler);
+	virtual ~NwConnection();
+
+	bool initialize(bufferevent* bev);
+	
 	const Backend* backend() const;
 	NwMessageFilter* filter() const;
 	NwEventHandler* handler() const;

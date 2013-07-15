@@ -41,6 +41,7 @@ public:
 	void exit(float sec = 0.0f);
 	void quit();
 
+	// Internal functions
 	event_base* backend() const;
 
 private:
