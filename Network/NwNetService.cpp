@@ -238,6 +238,7 @@ NwListener* NwNetService::listen(const char* ip, int port, int backlog /* = -1 *
 	}
 	catch (const std::bad_alloc& e)
 	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
 		evconnlistener_free(listener);
 		return 0;
 	}
