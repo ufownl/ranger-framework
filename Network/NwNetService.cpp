@@ -31,45 +31,103 @@
 
 static void event_cb(bufferevent* bev, short events, void* ctx)
 {
-	NwNetService* service = static_cast<NwNetService*>(ctx);
-
-	if (events & BEV_EVENT_ERROR)
+	try
 	{
-		int errcode = EVUTIL_SOCKET_ERROR();
-		const char* err = "No error.";
+		NwNetService* service = static_cast<NwNetService*>(ctx);
 
-		if (errcode)
+		if (events & BEV_EVENT_ERROR)
 		{
-			err = evutil_socket_error_to_string(errcode);
+			int errcode = EVUTIL_SOCKET_ERROR();
+			const char* err = "No error.";
+
+			if (errcode)
+			{
+				err = evutil_socket_error_to_string(errcode);
+			}
+
+			bufferevent_free(bev);
+			service->handler()->onError(0, err);
+			return;
 		}
 
-		bufferevent_free(bev);
-		service->handler()->onError(0, err);
-		return;
-	}
+		if (events & BEV_EVENT_TIMEOUT)
+		{
+			bufferevent_free(bev);
+			service->handler()->onTimeout(0);
+			return;
+		}
 
-	if (events & BEV_EVENT_TIMEOUT)
-	{
-		bufferevent_free(bev);
-		service->handler()->onTimeout(0);
-		return;
-	}
+		if (events & BEV_EVENT_EOF)
+		{
+			bufferevent_free(bev);
+			service->handler()->onEof(0);
+			return;
+		}
 
-	if (events & BEV_EVENT_EOF)
-	{
-		bufferevent_free(bev);
-		service->handler()->onEof(0);
-		return;
-	}
+		if (events & BEV_EVENT_CONNECTED)
+		{
+			NwConnectionPtr conn;
 
-	if (events & BEV_EVENT_CONNECTED)
+			try
+			{
+				NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
+
+				conn = RfNew NwConnection(filter, service->handler());
+				if (!conn->initialize(bev))
+				{
+					fputs("NwConnection initialization failed.", stderr);
+					return;
+				}
+			}
+			catch (const std::bad_alloc& e)
+			{
+				bufferevent_free(bev);
+				throw e;
+			}
+
+			service->handler()->onConnect(conn);
+			return;
+		}
+	}
+	catch (const std::invalid_argument& e)
 	{
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
+	}
+	catch (const std::bad_alloc& e)
+	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
+	}
+	catch (const std::exception& e)
+	{
+		fprintf(stderr, "exception: %s\n", e.what());
+	}
+}
+
+static void accept_cb(evconnlistener* listener, evutil_socket_t fd, sockaddr* addr, int socklen, void* ctx)
+{
+	try
+	{
+		NwNetService* service = static_cast<NwNetService*>(ctx);
+		bufferevent* bev = bufferevent_socket_new(service->dispatcher()->backend(), fd,
+			BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS);
+
+		if (!bev)
+		{
+			return;
+		}
+
 		NwConnectionPtr conn;
-		NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
 
 		try
 		{
-			conn = RfNew NwConnection(bev, filter, service->handler());
+			NwMessageFilterPtr filter = service->factory()->create<NwMessageFilter>();
+
+			conn = RfNew NwConnection(filter, service->handler());
+			if (!conn->initialize(bev))
+			{
+				fputs("NwConnection initialization failed.", stderr);
+				return;
+			}
 		}
 		catch (const std::bad_alloc& e)
 		{
@@ -77,20 +135,20 @@ static void event_cb(bufferevent* bev, short events, void* ctx)
 			throw e;
 		}
 
-		service->handler()->onConnect(conn);
-		return;
+		service->handler()->onAccept(conn);
 	}
-}
-
-static void accept_cb(evconnlistener* listener, evutil_socket_t fd, sockaddr* addr, int socklen, void* ctx)
-{
-	NwNetService* service = static_cast<NwNetService*>(ctx);
-	bufferevent* bev = bufferevent_socket_new(service->dispatcher()->backend(), fd,
-		BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS);
-	NwConnectionPtr conn = RfNew NwConnection(
-		bev, service->factory()->create<NwMessageFilter>(), service->handler());
-
-	service->handler()->onAccept(conn);
+	catch (const std::invalid_argument& e)
+	{
+		fprintf(stderr, "invalid_argument: %s\n", e.what());
+	}
+	catch (const std::bad_alloc& e)
+	{
+		fprintf(stderr, "bad_alloc: %s\n", e.what());
+	}
+	catch (const std::exception& e)
+	{
+		fprintf(stderr, "exception: %s\n", e.what());
+	}
 }
 
 NwNetService::NwNetService(NwEventDispatcher* dispatcher, NwMessageFilterFactory* factory, NwEventHandler* handler)

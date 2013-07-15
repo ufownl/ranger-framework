@@ -41,6 +41,7 @@ public:
 	bool connect(const char* addr, int port);
 	NwListener* listen(const char* ip, int port, int backlog = -1);
 
+	// Internal functionos
 	NwEventDispatcher* dispatcher() const;
 	NwMessageFilterFactory* factory() const;
 	NwEventHandler* handler() const;

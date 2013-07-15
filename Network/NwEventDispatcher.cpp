@@ -18,6 +18,7 @@
 
 #include <event2/event.h>
 #include "NwEventDispatcher.h"
+#include <stdio.h>
 
 NwEventDispatcher::NwEventDispatcher(int cpus /* = 0 */)
 	: mInitializer(NwInitializer::getSingletonPtr())
@@ -31,6 +32,7 @@ NwEventDispatcher::NwEventDispatcher(int cpus /* = 0 */)
 		}
 		catch (const std::logic_error& e)
 		{
+			fprintf(stderr, "logic_error: %s\n", e.what());
 			mInitializer = NwInitializer::getSingletonPtr();
 		}
 	}
@@ -39,7 +41,7 @@ NwEventDispatcher::NwEventDispatcher(int cpus /* = 0 */)
 
 	if (!cfg)
 	{
-		throw std::runtime_error("event_config creation failed.");
+		throw std::bad_alloc();
 	}
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -55,7 +57,7 @@ NwEventDispatcher::NwEventDispatcher(int cpus /* = 0 */)
 	if (!mBackend)
 	{
 		event_config_free(cfg);
-		throw std::runtime_error("event_base creation failed.");
+		throw std::bad_alloc();
 	}
 
 	event_config_free(cfg);

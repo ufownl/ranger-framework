@@ -36,9 +36,6 @@ struct evbuffer;
 class NwBufferBase : public RefObject<NwBufferBase_Alloc, boost::detail::atomic_count>
 {
 public:
-	NwBufferBase(evbuffer* evbuf);
-	virtual ~NwBufferBase();
-
 	bool append(const void* data, size_t len);
 	bool append(NwBufferBase* buf);
 	int printf(const char* fmt, ...);
@@ -62,6 +59,10 @@ public:
 
 	int search(void* src, size_t len, int pos = 0) const;
 	size_t size() const;
+
+	// Internal functions
+	NwBufferBase(evbuffer* evbuf);
+	virtual ~NwBufferBase();
 
 	evbuffer* backend() const;
 
