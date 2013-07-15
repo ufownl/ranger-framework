@@ -22,6 +22,7 @@
 #include "Memory/STLAllocator.h"
 #include "NwMessageFilter.h"
 #include <string>
+#include <list>
 
 struct bufferevent;
 struct ev_token_bucket_cfg;
@@ -62,26 +63,32 @@ public:
 	void* getExtraData() const;
 
 	// Internal functions
-	NwConnection(NwMessageFilter* filter, NwEventHandler* handler);
+	NwConnection(NwEventHandler* handler);
 	virtual ~NwConnection();
 
 	bool initialize(bufferevent* bev);
+	void shutdown();
+
+	bool addFilter(NwMessageFilterPtr filter);
 	
 	const Backend* backend() const;
-	NwMessageFilter* filter() const;
 	NwEventHandler* handler() const;
 
 private:
 	Backend mBackend;
-
-	NwMessageFilterPtr mFilter;
 	NwEventHandler* mHandler;
+
+	std::list<
+		NwMessageFilterPtr,
+		STLAllocator<NwMessageFilterPtr, NwConnection_Alloc>
+	> mFilters;
 
 	std::basic_string<
 		char,
 		std::char_traits<char>,
 		STLAllocator<char, NwConnection_Alloc>
 	> mIP;
+
 	int mPort;
 
 	void* mExtra;

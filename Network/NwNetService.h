@@ -19,8 +19,10 @@
 #ifndef __Network_NwNetService_H__
 #define __Network_NwNetService_H__
 
+#include "Memory/STLAllocator.h"
 #include "NwEventDispatcher.h"
 #include "NwMessageFilter.h"
+#include <list>
 
 class NwEventHandler;
 class NwListener;
@@ -35,21 +37,30 @@ class NwListener;
 class NwNetService : public RefObject<NwNetService_Alloc, boost::detail::atomic_count>
 {
 public:
-	NwNetService(NwEventDispatcher* dispatcher, NwMessageFilterFactory* factory, NwEventHandler* handler);
+	typedef std::list<
+		NwMessageFilterFactoryPtr,
+		STLAllocator<NwMessageFilterFactoryPtr, NwNetService_Alloc>
+	> NwMessageFilterFactoryList;
+
+public:
+	NwNetService(NwEventDispatcher* dispatcher, NwEventHandler* handler);
 	virtual ~NwNetService();
+
+	void addFilterFactory(NwMessageFilterFactoryPtr factory);
 
 	bool connect(const char* addr, int port);
 	NwListener* listen(const char* ip, int port, int backlog = -1);
 
 	// Internal functionos
 	NwEventDispatcher* dispatcher() const;
-	NwMessageFilterFactory* factory() const;
 	NwEventHandler* handler() const;
+	const NwMessageFilterFactoryList& factories() const;
 
 private:
 	NwEventDispatcherPtr mDispatcher;
-	NwMessageFilterFactoryPtr mFactory;
 	NwEventHandler* mHandler;
+
+	NwMessageFilterFactoryList mFactories;
 };
 
 DeclareSmartPointer(NwNetService);

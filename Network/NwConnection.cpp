@@ -36,7 +36,7 @@ static bufferevent_filter_result filter_input_cb(
 		NwBufferBasePtr src = RfNew NwBufferBase(source);
 		NwBufferBasePtr dst = RfNew NwBufferBase(destination);
 
-		switch (static_cast<NwConnection*>(ctx)->filter()->decode(src, dst))
+		switch (static_cast<NwMessageFilter*>(ctx)->decode(src, dst))
 		{
 		case NwMessageFilter::eOK:
 			return BEV_OK;
@@ -71,7 +71,7 @@ static bufferevent_filter_result filter_output_cb(
 		NwBufferBasePtr src = RfNew NwBufferBase(source);
 		NwBufferBasePtr dst = RfNew NwBufferBase(destination);
 
-		switch (static_cast<NwConnection*>(ctx)->filter()->encode(src, dst))
+		switch (static_cast<NwMessageFilter*>(ctx)->encode(src, dst))
 		{
 		case NwMessageFilter::eOK:
 			return BEV_OK;
@@ -279,9 +279,8 @@ void* NwConnection::getExtraData() const
 	return mExtra;
 }
 
-NwConnection::NwConnection(NwMessageFilter* filter, NwEventHandler* handler)
-	: mFilter(filter)
-	, mHandler(handler)
+NwConnection::NwConnection(NwEventHandler* handler)
+	: mHandler(handler)
 	, mPort(0)
 	, mExtra(0)
 {
@@ -292,15 +291,7 @@ NwConnection::NwConnection(NwMessageFilter* filter, NwEventHandler* handler)
 
 NwConnection::~NwConnection()
 {
-	if (mBackend.frontend)
-	{
-		bufferevent_free(mBackend.frontend);
-	}
-
-	if (mBackend.rate)
-	{
-		ev_token_bucket_cfg_free(mBackend.rate);
-	}
+	shutdown();
 }
 
 bool NwConnection::initialize(bufferevent* bev)
@@ -310,27 +301,20 @@ bool NwConnection::initialize(bufferevent* bev)
 		return false;
 	}
 
-	if (!mFilter || !mHandler)
+	if (!mHandler)
 	{
 		bufferevent_free(bev);
 		return false;
 	}
-	
+
+	shutdown();
+
+	bufferevent_setcb(bev, read_cb, 0, event_cb, this);
+	bufferevent_enable(bev, EV_READ | EV_WRITE);
+
 	mBackend.backend = bev;
-	mBackend.frontend = bufferevent_filter_new(
-		bev, filter_input_cb, filter_output_cb,
-		BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS,
-		0, this);
+	mBackend.frontend = bev;
 	mBackend.rate = 0;
-
-	if (!mBackend.frontend)
-	{
-		bufferevent_free(bev);
-		return false;
-	}
-
-	bufferevent_setcb(mBackend.frontend, read_cb, 0, event_cb, this);
-	bufferevent_enable(mBackend.frontend, EV_READ | EV_WRITE);
 
 	sockaddr_in addr;
 	socklen_t len = sizeof(addr);
@@ -342,14 +326,54 @@ bool NwConnection::initialize(bufferevent* bev)
 	return true;
 }
 
+void NwConnection::shutdown()
+{
+	if (mBackend.frontend)
+	{
+		bufferevent_free(mBackend.frontend);
+		mBackend.frontend = 0;
+		mBackend.backend = 0;
+	}
+
+	if (mBackend.rate)
+	{
+		ev_token_bucket_cfg_free(mBackend.rate);
+		mBackend.rate = 0;
+	}
+
+	mFilters.clear();
+}
+
+bool NwConnection::addFilter(NwMessageFilterPtr filter)
+{
+	if (!filter || !mBackend.frontend)
+	{
+		return false;
+	}
+
+	bufferevent* frontend = bufferevent_filter_new(
+		mBackend.frontend, filter_input_cb, filter_output_cb,
+		BEV_OPT_CLOSE_ON_FREE | BEV_OPT_THREADSAFE | BEV_OPT_UNLOCK_CALLBACKS | BEV_OPT_DEFER_CALLBACKS,
+		0, filter.data());
+
+	if (!frontend)
+	{
+		return false;
+	}
+
+	bufferevent_setcb(frontend, read_cb, 0, event_cb, this);
+	bufferevent_enable(frontend, EV_READ | EV_WRITE);
+
+	mBackend.frontend = frontend;
+
+	mFilters.push_back(filter);
+
+	return true;
+}
+
 const NwConnection::Backend* NwConnection::backend() const
 {
 	return &mBackend;
-}
-
-NwMessageFilter* NwConnection::filter() const
-{
-	return mFilter;
 }
 
 NwEventHandler* NwConnection::handler() const
