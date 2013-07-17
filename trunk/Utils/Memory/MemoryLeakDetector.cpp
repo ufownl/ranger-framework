@@ -60,7 +60,7 @@ void MemoryLeakDetector::dumpMemoryState()
 	for (MemoryState::iterator i = mState.begin(); i != mState.end(); ++i)
 	{
 		total += i->size;
-        fprintf(stderr, "addr: 0x%08lX  size: %-4lu  file: %s (%ld)\n", (long unsigned int)i->addr, i->size, i->file, i->line);
+        fprintf(stderr, "addr: %p  size: %-4lu  file: %s (%ld)\n", i->addr, i->size, i->file, i->line);
 	}
 	fprintf(stderr, "Total: %lu bytes.\n", total);
 }
@@ -80,7 +80,7 @@ void MemoryLeakDetector::dumpDifferences(const MemoryState &s0, const MemoryStat
 	for (MemoryState::iterator i = state.begin(); i != state.end(); ++i)
 	{
 		total += i->size;
-        fprintf(stderr, "addr: 0x%08lX  size: %-4lu  file: %s (%ld)\n", (long unsigned int)i->addr, i->size, i->file, i->line);
+        fprintf(stderr, "addr: %p  size: %-4lu  file: %s (%ld)\n", i->addr, i->size, i->file, i->line);
 	}
 	fprintf(stderr, "Total: %lu bytes.\n", total);
 }
