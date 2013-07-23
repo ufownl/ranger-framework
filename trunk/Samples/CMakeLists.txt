@@ -21,6 +21,7 @@ INCLUDE_DIRECTORIES(
 		${RANGER_SOURCE_DIR}/Framework
 		${RANGER_SOURCE_DIR}/BehaviorTree
 		${RANGER_SOURCE_DIR}/Network
+		${RANGER_SOURCE_DIR}/Contribs/include
 )
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
@@ -44,6 +45,8 @@ ADD_DEPENDENCIES(fsm_sample Utils)
 ADD_DEPENDENCIES(multimethods_sample Utils)
 ADD_DEPENDENCIES(network_sample Utils Network)
 ADD_DEPENDENCIES(visitor_sample Utils)
+
+LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
 TARGET_LINK_LIBRARIES(bt_sample BehaviorTree Utils)
 TARGET_LINK_LIBRARIES(coroutine_sample Utils)
