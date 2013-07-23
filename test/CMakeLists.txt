@@ -78,6 +78,7 @@ INCLUDE_DIRECTORIES(
 		${RANGER_SOURCE_DIR}/Utils
 		${RANGER_SOURCE_DIR}/Framework
 		${RANGER_SOURCE_DIR}/BehaviorTree
+		${RANGER_SOURCE_DIR}/Contribs/include
 )
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
@@ -98,5 +99,7 @@ ADD_EXECUTABLE(test
 )
 
 ADD_DEPENDENCIES(test Utils Framework BehaviorTree)
+
+LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
 TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils)
