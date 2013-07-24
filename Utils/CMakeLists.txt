@@ -119,21 +119,39 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 SET(LIBRARY_OUTPUT_PATH ${RANGER_BINARY_DIR}/lib)
 
-ADD_LIBRARY(Utils SHARED
-		${Container_HEADERS}
-		${Memory_HEADERS}
-		${Memory_SOURCES}
-		${MPL_HEADERS}
-		${Multimethods_HEADERS}
-		${Object_HEADERS}
-		${Object_SOURCES}
-		${Process_HEADERS}
-		${Process_SOURCES}
-		${System_HEADERS}
-		${System_SOURCES}
-		${Thread_HEADERS}
-		${Thread_SOURCES}
-)
+IF(WIN32)
+	ADD_LIBRARY(Utils STATIC
+			${Container_HEADERS}
+			${Memory_HEADERS}
+			${Memory_SOURCES}
+			${MPL_HEADERS}
+			${Multimethods_HEADERS}
+			${Object_HEADERS}
+			${Object_SOURCES}
+			${Process_HEADERS}
+			${Process_SOURCES}
+			${System_HEADERS}
+			${System_SOURCES}
+			${Thread_HEADERS}
+			${Thread_SOURCES}
+	)
+ELSE(WIN32)
+	ADD_LIBRARY(Utils SHARED
+			${Container_HEADERS}
+			${Memory_HEADERS}
+			${Memory_SOURCES}
+			${MPL_HEADERS}
+			${Multimethods_HEADERS}
+			${Object_HEADERS}
+			${Object_SOURCES}
+			${Process_HEADERS}
+			${Process_SOURCES}
+			${System_HEADERS}
+			${System_SOURCES}
+			${Thread_HEADERS}
+			${Thread_SOURCES}
+	)
+ENDIF(WIN32)
 
 LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
