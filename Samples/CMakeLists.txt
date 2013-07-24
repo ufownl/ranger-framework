@@ -16,7 +16,7 @@
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
 INCLUDE_DIRECTORIES(
-		.
+		${CMAKE_CURRENT_SOURCE_DIR}
 		${RANGER_SOURCE_DIR}/Utils
 		${RANGER_SOURCE_DIR}/Framework
 		${RANGER_SOURCE_DIR}/BehaviorTree

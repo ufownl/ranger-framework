@@ -34,7 +34,7 @@ SET(Framework_SOURCES
 )
 
 INCLUDE_DIRECTORIES(
-		.
+		${CMAKE_CURRENT_SOURCE_DIR}
 		${RANGER_SOURCE_DIR}/Utils
 		${RANGER_SOURCE_DIR}/Contribs/include
 )
