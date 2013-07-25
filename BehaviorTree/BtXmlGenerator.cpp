@@ -31,7 +31,6 @@
 #include <rapidxml/rapidxml_utils.hpp>
 #include <string.h>
 
-
 BtNode* BtXmlGenerator::generate(const char* path)
 {
 	regist<
