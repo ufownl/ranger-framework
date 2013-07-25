@@ -18,8 +18,6 @@
 
 #include "BtParallelFailOnAllNode.h"
 
-static BtNodeFactoryRegister<BtParallelFailOnAllNode> gsReg;
-
 VISITABLE_IMPL(BtParallelFailOnAllNode, BtGenerator)
 
 BtParallelFailOnAllNode::BtParallelFailOnAllNode()

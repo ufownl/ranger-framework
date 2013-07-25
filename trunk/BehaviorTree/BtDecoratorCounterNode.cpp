@@ -19,8 +19,6 @@
 #include "BtDecoratorCounterNode.h"
 #include "BtParams.h"
 
-static BtNodeFactoryRegister<BtDecoratorCounterNode> gsReg;
-
 VISITABLE_IMPL(BtDecoratorCounterNode, BtGenerator)
 
 BtDecoratorCounterNode::BtDecoratorCounterNode()

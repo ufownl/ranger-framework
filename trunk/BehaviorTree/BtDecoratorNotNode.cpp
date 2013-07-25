@@ -18,8 +18,6 @@
 
 #include "BtDecoratorNotNode.h"
 
-static BtNodeFactoryRegister<BtDecoratorNotNode> gsReg;
-
 VISITABLE_IMPL(BtDecoratorNotNode, BtGenerator)
 
 BtDecoratorNotNode::BtDecoratorNotNode()

@@ -18,8 +18,6 @@
 
 #include "BtSequenceNode.h"
 
-static BtNodeFactoryRegister<BtSequenceNode> gsReg;
-
 VISITABLE_IMPL(BtSequenceNode, BtGenerator)
 
 BtSequenceNode::BtSequenceNode()

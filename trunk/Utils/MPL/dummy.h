@@ -22,7 +22,6 @@
 template <class T>
 struct dummy
 {
-	typedef T type;
 };
 
 #endif  // __Utils_MPL_dummy_H__

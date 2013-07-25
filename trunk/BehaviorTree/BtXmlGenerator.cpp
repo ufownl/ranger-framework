@@ -31,8 +31,24 @@
 #include <rapidxml/rapidxml_utils.hpp>
 #include <string.h>
 
+
 BtNode* BtXmlGenerator::generate(const char* path)
 {
+	regist<
+		boost::mpl::vector<
+			BtSelectorNode,
+			BtSequenceNode,
+			BtParallelSucceedOnAllNode,
+			BtParallelFailOnAllNode,
+			BtParallelHybridNode,
+			BtDecoratorNotNode,
+			BtDecoratorTimerNode,
+			BtDecoratorCounterNode,
+			BtDecoratorForNode,
+			BtDecoratorUntilNode
+		>
+	>();
+
 	rapidxml::file<> f(path);
 	rapidxml::xml_document<> d;
 

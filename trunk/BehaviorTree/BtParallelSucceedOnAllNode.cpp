@@ -18,8 +18,6 @@
 
 #include "BtParallelSucceedOnAllNode.h"
 
-static BtNodeFactoryRegister<BtParallelSucceedOnAllNode> gsReg;
-
 VISITABLE_IMPL(BtParallelSucceedOnAllNode, BtGenerator)
 
 BtParallelSucceedOnAllNode::BtParallelSucceedOnAllNode()

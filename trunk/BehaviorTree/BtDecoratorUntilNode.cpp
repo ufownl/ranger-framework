@@ -18,8 +18,6 @@
 
 #include "BtDecoratorUntilNode.h"
 
-static BtNodeFactoryRegister<BtDecoratorUntilNode> gsReg;
-
 VISITABLE_IMPL(BtDecoratorUntilNode, BtGenerator)
 
 BtDecoratorUntilNode::BtDecoratorUntilNode()

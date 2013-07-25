@@ -46,6 +46,12 @@ public:
 public:
 	virtual void setUp()
 	{
+		BtXmlGenerator::regist<
+			boost::mpl::vector<
+				MyConditionNode,
+				MyActionNode
+			>
+		>();
 	}
 
 	virtual void tearDown()
@@ -92,8 +98,5 @@ struct BtNodeTraits<BtBehaviorNodeTest::MyActionNode>
 		return "BtBehaviorNodeTest::MyActionNode";
 	}
 };
-
-static BtNodeFactoryRegister<BtBehaviorNodeTest::MyConditionNode> gsConditionReg;
-static BtNodeFactoryRegister<BtBehaviorNodeTest::MyActionNode> gsActionReg;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(BtBehaviorNodeTest);

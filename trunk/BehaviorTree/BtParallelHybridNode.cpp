@@ -18,8 +18,6 @@
 
 #include "BtParallelHybridNode.h"
 
-static BtNodeFactoryRegister<BtParallelHybridNode> gsReg;
-
 VISITABLE_IMPL(BtParallelHybridNode, BtGenerator)
 
 BtParallelHybridNode::BtParallelHybridNode()

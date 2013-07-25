@@ -78,8 +78,6 @@ struct BtNodeTraits<MyConditionNode>
 	}
 };
 
-static BtNodeFactoryRegister<MyConditionNode> gsConditionReg;
-
 class MyActionNode : public BtActionNode
 {
 protected:
@@ -107,10 +105,15 @@ struct BtNodeTraits<MyActionNode>
 	}
 };
 
-static BtNodeFactoryRegister<MyActionNode> gsActionReg;
-
 int main()
 {
+	BtXmlGenerator::regist<
+		boost::mpl::vector<
+			MyConditionNode,
+			MyActionNode
+		>
+	>();
+
 	BtParamsPtr params = RfNew BtParams(32);
 	BtNodePtr root = BtXmlGenerator::generate("./bt_hello.xml");
 
