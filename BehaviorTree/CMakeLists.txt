@@ -63,17 +63,10 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 SET(LIBRARY_OUTPUT_PATH ${RANGER_BINARY_DIR}/lib)
 
-IF(WIN32)
-	ADD_LIBRARY(BehaviorTree STATIC
-			${BehaviorTree_HEADERS}
-			${BehaviorTree_SOURCES}
-	)
-ELSE(WIN32)
-	ADD_LIBRARY(BehaviorTree SHARED
-			${BehaviorTree_HEADERS}
-			${BehaviorTree_SOURCES}
-	)
-ENDIF(WIN32)
+ADD_LIBRARY(BehaviorTree
+		${BehaviorTree_HEADERS}
+		${BehaviorTree_SOURCES}
+)
 
 ADD_DEPENDENCIES(BehaviorTree Utils)
 

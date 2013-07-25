@@ -15,22 +15,16 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
 
-SET(Framework_HEADERS
-		RfAction.h
-		RfActionHandler.h
-		RfRequestService.h
-		RfRunnableService.h
-		RfService.h
-		RfServiceManager.h
+SET(AutoRecast_HEADERS
+		MeshLoaderObj.h
+		ChunkyTriMesh.h
+		InputGeom.h
 )
 
-SET(Framework_SOURCES
-		RfAction.cpp
-		RfActionHandler.cpp
-		RfRequestService.cpp
-		RfRunnableService.cpp
-		RfService.cpp
-		RfServiceManager.cpp
+SET(AutoRecast_SOURCES
+		MeshLoaderObj.cpp
+		ChunkyTriMesh.cpp
+		InputGeom.cpp
 )
 
 INCLUDE_DIRECTORIES(
@@ -43,16 +37,16 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 SET(LIBRARY_OUTPUT_PATH ${RANGER_BINARY_DIR}/lib)
 
-ADD_LIBRARY(Framework
-		${Framework_HEADERS}
-		${Framework_SOURCES}
+ADD_LIBRARY(AutoRecast
+		${AutoRecast_HEADERS}
+		${AutoRecast_SOURCES}
 )
 
-ADD_DEPENDENCIES(Framework Utils)
+ADD_DEPENDENCIES(AutoRecast Utils)
 
 LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
-TARGET_LINK_LIBRARIES(Framework Utils)
+TARGET_LINK_LIBRARIES(AutoRecast Utils DebugUtils Recast Detour DetourCrowd DetourTileCache)
 
-INSTALL(TARGETS Framework DESTINATION lib)
-INSTALL(FILES ${Framework_HEADERS} DESTINATION include)
+INSTALL(TARGETS AutoRecast DESTINATION lib)
+INSTALL(FILES ${AutoRecast_HEADERS} DESTINATION include)

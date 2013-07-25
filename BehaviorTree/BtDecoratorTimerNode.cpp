@@ -20,8 +20,6 @@
 #include "BtParams.h"
 #include "System/Timer.h"
 
-static BtNodeFactoryRegister<BtDecoratorTimerNode> msReg;
-
 VISITABLE_IMPL(BtDecoratorTimerNode, BtGenerator)
 
 BtDecoratorTimerNode::BtDecoratorTimerNode()

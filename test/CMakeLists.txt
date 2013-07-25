@@ -29,7 +29,6 @@ SET(test_Utils_Memory_SOURCES
 
 SET(test_Utils_MPL_SOURCES
 		Utils/MPL/BindTest.cpp
-		Utils/MPL/DummyTest.cpp
 		Utils/MPL/FiniteStateMachineTest.cpp
 		Utils/MPL/HierarchyGeneratorTest.cpp
 )

@@ -20,11 +20,30 @@
 #define __BehaviorTree_BtXmlGenerator_H__
 
 #include "BtNode.h"
+#include "MPL/dummy.h"
+#include <boost/mpl/for_each.hpp>
+#include <boost/mpl/transform.hpp>
 #include <rapidxml/rapidxml.hpp>
 
 class BtXmlGenerator : protected BtGenerator
 {
+private:
+	struct regist_helper
+	{
+		template <class T>
+		void operator () (dummy<T>) const
+		{
+			static BtNodeFactoryRegister<T> reg;
+		}
+	};
+
 public:
+	template <class T>
+	static void regist()
+	{
+		boost::mpl::for_each<typename boost::mpl::transform<T, dummy<boost::mpl::_1> >::type>(regist_helper());
+	}
+	
 	static BtNode* generate(const char* path);
 
 protected:

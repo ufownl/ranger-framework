@@ -18,8 +18,6 @@
 
 #include "BtSelectorNode.h"
 
-static BtNodeFactoryRegister<BtSelectorNode> gsReg;
-
 VISITABLE_IMPL(BtSelectorNode, BtGenerator)
 
 BtSelectorNode::BtSelectorNode()
