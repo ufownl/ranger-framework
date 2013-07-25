@@ -22,10 +22,10 @@
 #include "Memory/STLAllocator.h"
 #include "NwEventDispatcher.h"
 #include "NwMessageFilter.h"
+#include "NwListener.h"
 #include <list>
 
 class NwEventHandler;
-class NwListener;
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
 #include "Memory/TCMallocAllocator.h"
@@ -49,7 +49,7 @@ public:
 	void addFilterFactory(NwMessageFilterFactoryPtr factory);
 
 	bool connect(const char* addr, int port);
-	NwListener* listen(const char* ip, int port, int backlog = -1);
+	NwListenerPtr listen(const char* ip, int port, int backlog = -1);
 
 	// Internal functionos
 	NwEventDispatcher* dispatcher() const;

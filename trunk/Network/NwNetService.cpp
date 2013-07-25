@@ -223,7 +223,7 @@ bool NwNetService::connect(const char* addr, int port)
 	return false;
 }
 
-NwListener* NwNetService::listen(const char* ip, int port, int backlog /* = -1 */)
+NwListenerPtr NwNetService::listen(const char* ip, int port, int backlog /* = -1 */)
 {
 	sockaddr_in sin;
 
