@@ -72,11 +72,17 @@ SET(test_BehaviorTree_SOURCES
 		BehaviorTree/BtDecoratorNodeTest.cpp
 )
 
+SET(test_AutoRecast_SOURCES
+		AutoRecast/ArMeshTileTest.cpp
+		AutoRecast/ArMeshDataTest.cpp
+)
+
 INCLUDE_DIRECTORIES(
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${RANGER_SOURCE_DIR}/Utils
 		${RANGER_SOURCE_DIR}/Framework
 		${RANGER_SOURCE_DIR}/BehaviorTree
+		${RANGER_SOURCE_DIR}/AutoRecast
 		${RANGER_SOURCE_DIR}/Contribs/include
 )
 
@@ -94,11 +100,12 @@ ADD_EXECUTABLE(test
 		${test_Utils_Thread_SOURCES}
 		${test_Framework_SOURCES}
 		${test_BehaviorTree_SOURCES}
+		${test_AutoRecast_SOURCES}
 		main.cpp
 )
 
-ADD_DEPENDENCIES(test Utils Framework BehaviorTree)
+ADD_DEPENDENCIES(test Utils Framework BehaviorTree AutoRecast)
 
 LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
-TARGET_LINK_LIBRARIES(test cppunit BehaviorTree Framework Utils)
+TARGET_LINK_LIBRARIES(test cppunit AutoRecast BehaviorTree Framework Utils)

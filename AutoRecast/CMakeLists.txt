@@ -19,12 +19,16 @@ SET(AutoRecast_HEADERS
 		MeshLoaderObj.h
 		ChunkyTriMesh.h
 		InputGeom.h
+		ArMeshTile.h
+		ArMeshData.h
 )
 
 SET(AutoRecast_SOURCES
 		MeshLoaderObj.cpp
 		ChunkyTriMesh.cpp
 		InputGeom.cpp
+		ArMeshTile.cpp
+		ArMeshData.cpp
 )
 
 INCLUDE_DIRECTORIES(
