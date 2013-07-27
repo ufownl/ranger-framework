@@ -22,7 +22,6 @@
 #include "BtNode.h"
 #include "MPL/dummy.h"
 #include <boost/mpl/for_each.hpp>
-#include <boost/mpl/transform.hpp>
 #include <rapidxml/rapidxml.hpp>
 
 class BtXmlGenerator : protected BtGenerator
@@ -41,7 +40,7 @@ public:
 	template <class T>
 	static void regist()
 	{
-		boost::mpl::for_each<typename boost::mpl::transform<T, dummy<boost::mpl::_1> >::type>(regist_helper());
+		boost::mpl::for_each<T, dummy<boost::mpl::_1> >(regist_helper());
 	}
 	
 	static BtNode* generate(const char* path);
