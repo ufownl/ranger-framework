@@ -131,8 +131,12 @@ ArMeshDataPtr ArMeshDataBuilder::build()
 		{
 			float tileBmin[3] = {bmin[0] + x * tcs, bmin[1], bmin[2] + y * tcs};
 			float tileBmax[3] = {bmin[0] + (x + 1) * tcs, bmax[1], bmin[2] + (y + 1) * tcs};
+			int accTime = mContext->getAccumulatedTime(RC_TIMER_TOTAL);
 
 			data->addTile(buildTile(x, y, tileBmin, tileBmax));
+
+			mContext->log(RC_LOG_PROGRESS, " - Build time: %d ms"
+					, mContext->getAccumulatedTime(RC_TIMER_TOTAL) - (accTime < 0 ? 0 : accTime));
 		}
 	}
 
@@ -183,16 +187,16 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 
 	mContext->startTimer(RC_TIMER_TOTAL);
 
-	mContext->log(RC_LOG_PROGRESS, "Building navigation:");
+	mContext->log(RC_LOG_PROGRESS, "Building navigation tile[%d, %d]:", tx, ty);
 	mContext->log(RC_LOG_PROGRESS, " - %d x %d cells", cfg.width, cfg.height);
 	mContext->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts / 1000.0f, ntris / 1000.0f);
-	mContext->log(RC_LOG_PROGRESS, " - tile [%d x %d]", tx, ty);
 
 	rcHeightfield* solid = rcAllocHeightfield();
 
 	if (!solid)
 	{
 		mContext->log(RC_LOG_ERROR, "Out of memory solid.");
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -200,6 +204,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		mContext->log(RC_LOG_ERROR, "Could not create solid heightfield.");
 		rcFreeHeightField(solid);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -210,6 +215,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		mContext->log(RC_LOG_ERROR, "Out of memory triareas.");
 		rcFreeHeightField(solid);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -222,6 +228,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		rcFree(triareas);
 		rcFreeHeightField(solid);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -248,6 +255,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		mContext->log(RC_LOG_ERROR, "Out of memory chf.");
 		rcFreeHeightField(solid);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -256,6 +264,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Could not build compact data.");
 		rcFreeCompactHeightfield(chf);
 		rcFreeHeightField(solid);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -265,6 +274,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		mContext->log(RC_LOG_ERROR, "Could not erode.");
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -282,6 +292,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		{
 			mContext->log(RC_LOG_ERROR, "Could not build regions.");
 			rcFreeCompactHeightfield(chf);
+			mContext->stopTimer(RC_TIMER_TOTAL);
 			return 0;
 		}
 	}
@@ -291,6 +302,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		{
 			mContext->log(RC_LOG_ERROR, "Could not build distance field.");
 			rcFreeCompactHeightfield(chf);
+			mContext->stopTimer(RC_TIMER_TOTAL);
 			return 0;
 		}
 
@@ -298,6 +310,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		{
 			mContext->log(RC_LOG_ERROR, "Could not build regions.");
 			rcFreeCompactHeightfield(chf);
+			mContext->stopTimer(RC_TIMER_TOTAL);
 			return 0;
 		}
 	}
@@ -308,6 +321,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		mContext->log(RC_LOG_ERROR, "Out of memory cset.");
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -316,6 +330,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Could not create contours.");
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -323,6 +338,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	{
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -333,6 +349,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Out of memory pmesh.");
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -342,6 +359,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		rcFreePolyMesh(pmesh);
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -353,6 +371,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		rcFreePolyMesh(pmesh);
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -363,6 +382,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		rcFreePolyMesh(pmesh);
 		rcFreeContourSet(cset);
 		rcFreeCompactHeightfield(chf);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -374,6 +394,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Too many vertices per poly %d (max: %d).", cfg.maxVertsPerPoly, DT_VERTS_PER_POLYGON);
 		rcFreePolyMeshDetail(dmesh);
 		rcFreePolyMesh(pmesh);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -382,6 +403,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Too many vertices per tile %d (max: %d).", pmesh->nverts, 0xFFFF);
 		rcFreePolyMeshDetail(dmesh);
 		rcFreePolyMesh(pmesh);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -432,6 +454,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 		mContext->log(RC_LOG_ERROR, "Could not build Detour navmesh.");
 		rcFreePolyMeshDetail(dmesh);
 		rcFreePolyMesh(pmesh);
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
@@ -449,6 +472,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	catch (const std::bad_alloc& e)
 	{
 		mContext->log(RC_LOG_ERROR, "Could not allocate ArMeshTile.");
+		mContext->stopTimer(RC_TIMER_TOTAL);
 		return 0;
 	}
 
