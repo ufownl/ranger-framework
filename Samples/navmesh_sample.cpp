@@ -84,7 +84,7 @@ protected:
 		}
 	}
 
-	virtual int doGetAccumulatedTime(const rcTimerLabel label)
+	virtual int doGetAccumulatedTime(const rcTimerLabel label) const
 	{
 		if (label >= RC_MAX_TIMERS)
 		{
@@ -163,6 +163,8 @@ int main()
 		ctx.log(RC_LOG_ERROR, "Build ArMeshData failed.");
 		return -1;
 	}
+
+	ctx.log(RC_LOG_PROGRESS, "Total build time: %d ms", ctx.getAccumulatedTime(RC_TIMER_TOTAL));
 
 	FILE* out = fopen("./all_tiles_navmesh.bin", "wb");
 
