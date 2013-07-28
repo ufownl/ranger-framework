@@ -19,11 +19,26 @@
 #include "ArMeshData.h"
 #include <algorithm>
 
+VISITABLE_IMPL(ArMeshData, ArMeshDataSerializer)
+
+ArMeshData::ArMeshData()
+	: mCount(0)
+{
+}
+
 ArMeshData::ArMeshData(const dtNavMeshParams& params)
 	: mParams(params)
 	, mTiles(params.maxTiles)
 	, mCount(0)
 {
+}
+
+void ArMeshData::initialize(const dtNavMeshParams& params)
+{
+	mParams = params;
+	mTiles.clear();
+	mTiles.resize(params.maxTiles);
+	mCount = 0;
 }
 
 const dtNavMeshParams& ArMeshData::getParams() const
@@ -38,6 +53,11 @@ int ArMeshData::getCount() const
 
 bool ArMeshData::addTile(ArMeshTilePtr tile)
 {
+	if (!tile)
+	{
+		return false;
+	}
+
 	if (static_cast<size_t>(mCount) >= mTiles.size())
 	{
 		return false;

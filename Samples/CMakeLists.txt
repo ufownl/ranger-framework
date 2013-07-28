@@ -21,6 +21,7 @@ INCLUDE_DIRECTORIES(
 		${RANGER_SOURCE_DIR}/Framework
 		${RANGER_SOURCE_DIR}/BehaviorTree
 		${RANGER_SOURCE_DIR}/Network
+		${RANGER_SOURCE_DIR}/AutoRecast
 		${RANGER_SOURCE_DIR}/Contribs/include
 )
 
@@ -36,6 +37,7 @@ ADD_EXECUTABLE(fsm_sample fsm_sample.cpp)
 ADD_EXECUTABLE(multimethods_sample multimethods_sample.cpp)
 ADD_EXECUTABLE(network_sample network_sample.cpp)
 ADD_EXECUTABLE(visitor_sample visitor_sample.cpp)
+ADD_EXECUTABLE(navmesh_sample navmesh_sample.cpp)
 
 ADD_DEPENDENCIES(bt_sample Utils BehaviorTree)
 ADD_DEPENDENCIES(coroutine_sample Utils)
@@ -45,6 +47,7 @@ ADD_DEPENDENCIES(fsm_sample Utils)
 ADD_DEPENDENCIES(multimethods_sample Utils)
 ADD_DEPENDENCIES(network_sample Utils Network)
 ADD_DEPENDENCIES(visitor_sample Utils)
+ADD_DEPENDENCIES(navmesh_sample Utils AutoRecast)
 
 LINK_DIRECTORIES(${RANGER_SOURCE_DIR}/Contribs/lib)
 
@@ -56,3 +59,4 @@ TARGET_LINK_LIBRARIES(fsm_sample Utils)
 TARGET_LINK_LIBRARIES(multimethods_sample Utils)
 TARGET_LINK_LIBRARIES(network_sample Network Utils)
 TARGET_LINK_LIBRARIES(visitor_sample Utils)
+TARGET_LINK_LIBRARIES(navmesh_sample AutoRecast Utils)

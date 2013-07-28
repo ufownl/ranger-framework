@@ -72,14 +72,14 @@ public:
 	bool loadMesh(class rcContext* ctx, const char* filepath);
 	
 	bool load(class rcContext* ctx, const char* filepath);
-	bool save(const char* filepath);
+	bool save(const char* filepath) const;	// Modified by RangerUFO
 	
 	/// Method to return static mesh data.
 	inline const rcMeshLoaderObj* getMesh() const { return m_mesh; }
 	inline const float* getMeshBoundsMin() const { return m_meshBMin; }
 	inline const float* getMeshBoundsMax() const { return m_meshBMax; }
 	inline const rcChunkyTriMesh* getChunkyMesh() const { return m_chunkyMesh; }
-	bool raycastMesh(float* src, float* dst, float& tmin);
+	bool raycastMesh(float* src, float* dst, float& tmin) const;	// Modified by RangerUFO
 
 	/// @name Off-Mesh connections.
 	///@{
@@ -93,7 +93,7 @@ public:
 	void addOffMeshConnection(const float* spos, const float* epos, const float rad,
 							  unsigned char bidir, unsigned char area, unsigned short flags);
 	void deleteOffMeshConnection(int i);
-	void drawOffMeshConnections(struct duDebugDraw* dd, bool hilight = false);
+	void drawOffMeshConnections(struct duDebugDraw* dd, bool hilight = false) const;	// Modified by RangerUFO
 	///@}
 
 	/// @name Box Volumes.
@@ -103,7 +103,7 @@ public:
 	void addConvexVolume(const float* verts, const int nverts,
 						 const float minh, const float maxh, unsigned char area);
 	void deleteConvexVolume(int i);
-	void drawConvexVolumes(struct duDebugDraw* dd, bool hilight = false);
+	void drawConvexVolumes(struct duDebugDraw* dd, bool hilight = false) const;
 	///@}
 };
 

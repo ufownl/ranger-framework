@@ -43,6 +43,7 @@ struct Visitor : public scatter_hierarchy<_seq, bind<VisitorUnit, R>::template s
 
 #define VISITABLE_DECL_ABS(_visitor)	virtual _visitor::Result accept(_visitor&) = 0;
 #define VISITABLE_DECL(_visitor)		virtual _visitor::Result accept(_visitor&);
+#define VISITABLE_DECL_NONVIRTUAL(_visitor)		_visitor::Result accept(_visitor&);
 #define VISITABLE_IMPL(_host, _visitor)	\
 	_visitor::Result _host::accept(_visitor& v) { return v.visit(*this); }
 

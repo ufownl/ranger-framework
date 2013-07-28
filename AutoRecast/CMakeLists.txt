@@ -21,6 +21,9 @@ SET(AutoRecast_HEADERS
 		InputGeom.h
 		ArMeshTile.h
 		ArMeshData.h
+		ArMeshDataBuilder.h
+		ArMeshDataSerializer.h
+		ArMeshDataFileWriter.h
 )
 
 SET(AutoRecast_SOURCES
@@ -29,6 +32,8 @@ SET(AutoRecast_SOURCES
 		InputGeom.cpp
 		ArMeshTile.cpp
 		ArMeshData.cpp
+		ArMeshDataBuilder.cpp
+		ArMeshDataFileWriter.cpp
 )
 
 INCLUDE_DIRECTORIES(
