@@ -70,7 +70,7 @@ typedef Visitor<
 class BtNode : public RefObject<BtNode_Alloc>
 {
 public:
-	VISITABLE_DECL_ABS(BtGenerator);
+	VISITABLE_DECL_ABS(BtGenerator)
 
 public:
 	BtNode();

@@ -16,55 +16,25 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ArMeshTile.h"
+#ifndef __AutoRecast_ArMeshDataFileWriter_H__
+#define __AutoRecast_ArMeshDataFileWriter_H__
 
-VISITABLE_IMPL(ArMeshTile, ArMeshDataSerializer)
+#include "ArMeshDataSerializer.h"
+#include <stdio.h>
 
-ArMeshTile::ArMeshTile()
-	: mData(0)
-	, mSize(0)
-	, mRef(0)
+class ArMeshDataFileWriter : public ArMeshDataSerializer
 {
-}
+public:
+	ArMeshDataFileWriter(FILE* out);
 
-ArMeshTile::ArMeshTile(unsigned char* data, int size, dtTileRef ref /* = 0 */)
-	: mData(data)
-	, mSize(size)
-	, mRef(ref)
-{
-}
+protected:
+	virtual bool onVisit(ArMeshTile& obj);
+	virtual bool onVisit(ArMeshData& obj);
 
-ArMeshTile::~ArMeshTile()
-{
-	if (mData)
-	{
-		dtFree(mData);
-	}
-}
+private:
+	FILE* mOut;
+};
 
-void ArMeshTile::initialize(unsigned char* data, int size, dtTileRef ref /* = 0 */)
-{
-	if (mData)
-	{
-		dtFree(mData);
-	}
+DeclareSmartPointer(ArMeshDataFileWriter);
 
-	mData = data;
-	mSize = size;
-	mRef = ref;
-}
-
-unsigned char* ArMeshTile::getData() const
-{
-	return mData;
-}
-
-int ArMeshTile::getSize() const
-{
-	return mSize;
-}
-
-dtTileRef ArMeshTile::getRef() const
-{
-	return mRef;
-}
+#endif  // __AutoRecast_ArMeshDataFileWriter_H__

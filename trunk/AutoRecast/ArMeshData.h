@@ -33,7 +33,13 @@
 class ArMeshData : public RefObject<ArMeshData_Alloc>
 {
 public:
+	VISITABLE_DECL_NONVIRTUAL(ArMeshDataSerializer)
+
+public:
+	ArMeshData();
 	ArMeshData(const dtNavMeshParams& params);
+
+	void initialize(const dtNavMeshParams& params);
 
 	const dtNavMeshParams& getParams() const;
 	int getCount() const;

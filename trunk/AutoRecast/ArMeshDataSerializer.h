@@ -16,43 +16,54 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __AutoRecast_ArMeshTile_H__
-#define __AutoRecast_ArMeshTile_H__
+#ifndef __AutoRecast_ArMeshDataSerializer_H__
+#define __AutoRecast_ArMeshDataSerializer_H__
 
 #include "Object/RefObject.h"
 #include "Object/SmartPointer.h"
-#include "ArMeshDataSerializer.h"
+#include "Object/Visitor.h"
 #include <DetourNavMesh.h>
+#include <boost/mpl/vector.hpp>
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
 #include "Memory/TCMallocAllocator.h"
-#define ArMeshTile_Alloc	TCMallocAllocator
+#define ArMeshDataSerializer_Alloc	TCMallocAllocator
 #else
-#define ArMeshTile_Alloc	Allocator
+#define ArMeshDataSerializer_Alloc	Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-class ArMeshTile : public RefObject<ArMeshTile_Alloc>
+class ArMeshTile;
+class ArMeshData;
+
+class ArMeshDataSerializer
+	: public Visitor<boost::mpl::vector<ArMeshTile, ArMeshData>, bool>
+	, public RefObject<ArMeshDataSerializer_Alloc>
 {
 public:
-	VISITABLE_DECL_NONVIRTUAL(ArMeshDataSerializer)
-
-public:
-	ArMeshTile();
-	ArMeshTile(unsigned char* data, int size, dtTileRef ref = 0);
-	virtual ~ArMeshTile();
-
-	void initialize(unsigned char* data, int size, dtTileRef ref = 0);
-
-	unsigned char* getData() const;
-	int getSize() const;
-	dtTileRef getRef() const;
-
-private:
-	unsigned char* mData;
-	int mSize;
-	dtTileRef mRef;
+	template <class T>
+	bool serialize(T& obj)
+	{
+		return obj.accept(*this);
+	}
 };
 
-DeclareSmartPointer(ArMeshTile);
+DeclareSmartPointer(ArMeshDataSerializer);
 
-#endif  // __AutoRecast_ArMeshTile_H__
+#define AR_NAVMESHSET_MAGIC		('M' << 24 | 'S' << 16 | 'E' << 8 | 'T')
+#define AR_NAVMESHSET_VERSION	1
+
+struct ArNavMeshSetHeader
+{
+	int magic;
+	int version;
+	int numTiles;
+	dtNavMeshParams params;
+};
+
+struct ArNavMeshTileHeader
+{
+	dtTileRef tileRef;
+	int dataSize;
+};
+
+#endif  // __AutoRecast_ArMeshDataSerializer_H__

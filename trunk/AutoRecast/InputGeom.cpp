@@ -252,7 +252,7 @@ bool InputGeom::load(rcContext* ctx, const char* filePath)
 	return true;
 }
 
-bool InputGeom::save(const char* filepath)
+bool InputGeom::save(const char* filepath) const	// Modified by RangerUFO
 {
 	if (!m_mesh) return false;
 	
@@ -277,7 +277,7 @@ bool InputGeom::save(const char* filepath)
 	// Convex volumes
 	for (int i = 0; i < m_volumeCount; ++i)
 	{
-		ConvexVolume* vol = &m_volumes[i];
+		const ConvexVolume* vol = &m_volumes[i];	// Modified by RangerUFO
 		fprintf(fp, "v %d %d %f %f\n", vol->nverts, vol->area, vol->hmin, vol->hmax);
 		for (int j = 0; j < vol->nverts; ++j)
 			fprintf(fp, "%f %f %f\n", vol->verts[j*3+0], vol->verts[j*3+1], vol->verts[j*3+2]);
@@ -324,7 +324,7 @@ static bool isectSegAABB(const float* sp, const float* sq,
 }
 
 
-bool InputGeom::raycastMesh(float* src, float* dst, float& tmin)
+bool InputGeom::raycastMesh(float* src, float* dst, float& tmin) const	// Modified by RangerUFO
 {
 	float dir[3];
 	rcVsub(dir, dst, src);
@@ -400,7 +400,7 @@ void InputGeom::deleteOffMeshConnection(int i)
 	m_offMeshConFlags[i] = m_offMeshConFlags[m_offMeshConCount];
 }
 
-void InputGeom::drawOffMeshConnections(duDebugDraw* dd, bool hilight)
+void InputGeom::drawOffMeshConnections(duDebugDraw* dd, bool hilight) const	// Modified by RangerUFO
 {
 	unsigned int conColor = duRGBA(192,0,128,192);
 	unsigned int baseColor = duRGBA(0,0,0,64);
@@ -409,7 +409,7 @@ void InputGeom::drawOffMeshConnections(duDebugDraw* dd, bool hilight)
 	dd->begin(DU_DRAW_LINES, 2.0f);
 	for (int i = 0; i < m_offMeshConCount; ++i)
 	{
-		float* v = &m_offMeshConVerts[i*3*2];
+		const float* v = &m_offMeshConVerts[i*3*2];	// Modified by RangerUFO
 
 		dd->vertex(v[0],v[1],v[2], baseColor);
 		dd->vertex(v[0],v[1]+0.2f,v[2], baseColor);
@@ -450,7 +450,7 @@ void InputGeom::deleteConvexVolume(int i)
 	m_volumes[i] = m_volumes[m_volumeCount];
 }
 
-void InputGeom::drawConvexVolumes(struct duDebugDraw* dd, bool /*hilight*/)
+void InputGeom::drawConvexVolumes(struct duDebugDraw* dd, bool /*hilight*/) const	// Modified by RangerUFO
 {
 	dd->depthMask(false);
 
