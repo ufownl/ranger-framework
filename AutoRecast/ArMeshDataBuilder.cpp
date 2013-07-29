@@ -19,35 +19,12 @@
 #include "ArMeshDataBuilder.h"
 #include "InputGeom.h"
 #include <Recast.h>
+#include <DetourCommon.h>
 #include <DetourNavMeshBuilder.h>
 #include <string.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <stdexcept>
-
-static unsigned int nextPow2(unsigned int v)
-{
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-	v++;
-	return v;
-}
-
-static unsigned int ilog2(unsigned int v)
-{
-	unsigned int r;
-	unsigned int shift;
-	r = (v > 0xffff) << 4; v >>= r;
-	shift = (v > 0xff) << 3; v >>= shift; r |= shift;
-	shift = (v > 0xf) << 2; v >>= shift; r |= shift;
-	shift = (v > 0x3) << 1; v >>= shift; r |= shift;
-	r |= (v >> 1);
-	return r;
-}
 
 ArMeshDataBuilder::ArMeshDataBuilder(rcContext* ctx, const InputGeom* geom, ArMeshProcess proc /* = 0 */)
 	: mContext(ctx)
@@ -75,7 +52,7 @@ ArMeshDataBuilder::ArMeshDataBuilder(rcContext* ctx, const InputGeom* geom, ArMe
 	}
 }
 
-ArMeshDataPtr ArMeshDataBuilder::build()
+ArMeshDataPtr ArMeshDataBuilder::build(bool buildTiles /* = true */, int* otw /* = 0 */, int* oth /* = 0 */)
 {
 	if (!mGeom || !mGeom->getMesh())
 	{
@@ -93,7 +70,18 @@ ArMeshDataPtr ArMeshDataBuilder::build()
 	int ts = mTileSize;
 	int tw = (gw + ts - 1) / ts;
 	int th = (gh + ts - 1) / ts;
-	int tileBits = rcMin(static_cast<int>(ilog2(nextPow2(tw * th))), 14);
+
+	if (otw)
+	{
+		*otw = tw;
+	}
+
+	if (oth)
+	{
+		*oth = th;
+	}
+
+	int tileBits = rcMin(static_cast<int>(dtIlog2(dtNextPow2(tw * th))), 14);
 	int polyBits = 22 - tileBits;
 	int maxTiles = 1 << tileBits;
 	int maxPolysPerTile = 1 << polyBits;
@@ -121,31 +109,26 @@ ArMeshDataPtr ArMeshDataBuilder::build()
 		return 0;
 	}
 
-	float tcs = mTileSize * mCellSize;
-
-	mContext->startTimer(RC_TIMER_TEMP);
-
-	for (int y = 0; y < th; ++y)
+	if (buildTiles)
 	{
-		for (int x = 0; x < tw; ++x)
+		for (int y = 0; y < th; ++y)
 		{
-			float tileBmin[3] = {bmin[0] + x * tcs, bmin[1], bmin[2] + y * tcs};
-			float tileBmax[3] = {bmin[0] + (x + 1) * tcs, bmax[1], bmin[2] + (y + 1) * tcs};
-			int accTime = mContext->getAccumulatedTime(RC_TIMER_TOTAL);
+			for (int x = 0; x < tw; ++x)
+			{
+				int accTime = mContext->getAccumulatedTime(RC_TIMER_TOTAL);
 
-			data->addTile(buildTile(x, y, tileBmin, tileBmax));
+				data->addTile(buildTile(x, y));
 
-			mContext->log(RC_LOG_PROGRESS, " - Build time: %d ms"
-					, mContext->getAccumulatedTime(RC_TIMER_TOTAL) - (accTime < 0 ? 0 : accTime));
+				mContext->log(RC_LOG_PROGRESS, " - Build time: %d ms"
+						, mContext->getAccumulatedTime(RC_TIMER_TOTAL) - (accTime < 0 ? 0 : accTime));
+			}
 		}
 	}
-
-	mContext->stopTimer(RC_TIMER_TEMP);
 
 	return data;
 }
 
-ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, const float* bmax)
+ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty)
 {
 	if (!mGeom || !mGeom->getMesh() || !mGeom->getChunkyMesh())
 	{
@@ -157,6 +140,11 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	int nverts = mGeom->getMesh()->getVertCount();
 	int ntris = mGeom->getMesh()->getTriCount();
 	const rcChunkyTriMesh* chunkyMesh = mGeom->getChunkyMesh();
+	const float* bmin = mGeom->getMeshBoundsMin();
+	const float* bmax = mGeom->getMeshBoundsMax();
+	float tcs = mTileSize * mCellSize;
+	float tileBmin[3] = {bmin[0] + tx * tcs, bmin[1], bmin[2] + ty * tcs};
+	float tileBmax[3] = {bmin[0] + (tx + 1) * tcs, bmax[1], bmin[2] + (ty + 1) * tcs};
 
 	rcConfig cfg;
 
@@ -178,8 +166,8 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty, const float* bmin, co
 	cfg.height = cfg.tileSize + cfg.borderSize * 2;
 	cfg.detailSampleDist = (mDetailSampleDist < 0.9f ? 0 : mCellSize * mDetailSampleDist);
 	cfg.detailSampleMaxError = mCellHeight * mDetailSampleMaxError;
-	rcVcopy(cfg.bmin, bmin);
-	rcVcopy(cfg.bmax, bmax);
+	rcVcopy(cfg.bmin, tileBmin);
+	rcVcopy(cfg.bmax, tileBmax);
 	cfg.bmin[0] -= cfg.borderSize * cfg.cs;
 	cfg.bmin[2] -= cfg.borderSize * cfg.cs;
 	cfg.bmax[0] += cfg.borderSize * cfg.cs;
