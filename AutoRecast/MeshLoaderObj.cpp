@@ -85,7 +85,7 @@ bool rcMeshLoaderObj::addTriangle(int a, int b, int c, int& cap)	// Modified by 
 	*dst++ = b;
 	*dst++ = c;
 	m_triCount++;
-	return true;
+	return true;	// Added by RangerUFO
 }
 
 static char* parseRow(char* buf, char* bufEnd, char* row, int len)
