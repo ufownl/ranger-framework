@@ -19,6 +19,7 @@
 #include "InputGeom.h"
 #include "ArMeshDataBuilder.h"
 #include "ArMeshDataFileWriter.h"
+#include "ArMeshDataFileReader.h"
 #include "System/Timer.h"
 #include <Recast.h>
 #include <stdio.h>
@@ -179,9 +180,30 @@ int main()
 	if (!writer.serialize(*data))
 	{
 		ctx.log(RC_LOG_ERROR, "Write ArMeshData failed.");
+		fclose(out);
+		return -1;
 	}
 
 	fclose(out);
+
+	FILE* in = fopen("./all_tiles_navmesh.bin", "rb");
+
+	if (!in)
+	{
+		ctx.log(RC_LOG_ERROR, "Open all_tiles_navmesh.bin failed.");
+		return -1;
+	}
+
+	ArMeshDataFileReader reader(in);
+
+	if (!reader.serialize(*data))
+	{
+		ctx.log(RC_LOG_ERROR, "Read ArMeshData failed.");
+		fclose(in);
+		return -1;
+	}
+
+	fclose(in);
 
 	return 0;
 }
