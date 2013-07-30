@@ -45,7 +45,7 @@ bool ArMeshDataFileReader::onVisit(ArMeshTile& obj)
 		return false;
 	}
 
-	unsigned char* data = static_cast<unsigned char*>(dtAlloc(header.dataSize, DT_ALLOC_PERM));
+	unsigned char* data = static_cast<unsigned char*>(dtAlloc(header.dataSize * sizeof(unsigned char), DT_ALLOC_PERM));
 
 	if (!data)
 	{
@@ -58,7 +58,7 @@ bool ArMeshDataFileReader::onVisit(ArMeshTile& obj)
 		return false;
 	}
 
-	obj.initialize(data, header.dataSize, header.tileRef);
+	obj.init(data, header.dataSize, header.tileRef);
 
 	return true;
 }
@@ -84,7 +84,7 @@ bool ArMeshDataFileReader::onVisit(ArMeshData& obj)
 
 	try
 	{
-		obj.initialize(header.params);
+		obj.init(header.params);
 
 		for (int i = 0; i < header.numTiles; ++i)
 		{

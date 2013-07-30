@@ -41,7 +41,7 @@ public:
 	ArMeshTile(unsigned char* data, int size, dtTileRef ref = 0);
 	virtual ~ArMeshTile();
 
-	void initialize(unsigned char* data, int size, dtTileRef ref = 0);
+	void init(unsigned char* data, int size, dtTileRef ref = 0);
 
 	unsigned char* getData() const;
 	int getSize() const;

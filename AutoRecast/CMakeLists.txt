@@ -25,6 +25,10 @@ SET(AutoRecast_HEADERS
 		ArMeshDataSerializer.h
 		ArMeshDataFileWriter.h
 		ArMeshDataFileReader.h
+		ArMesh.h
+		ArQuery.h
+		ArMeshImporter.h
+		ArMeshExporter.h
 )
 
 SET(AutoRecast_SOURCES
@@ -36,6 +40,10 @@ SET(AutoRecast_SOURCES
 		ArMeshDataBuilder.cpp
 		ArMeshDataFileWriter.cpp
 		ArMeshDataFileReader.cpp
+		ArMesh.cpp
+		ArQuery.cpp
+		ArMeshImporter.cpp
+		ArMeshExporter.cpp
 )
 
 INCLUDE_DIRECTORIES(

@@ -16,47 +16,43 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __AutoRecast_ArMeshData_H__
-#define __AutoRecast_ArMeshData_H__
+#ifndef __AutoRecast_ArQuery_H__
+#define __AutoRecast_ArQuery_H__
 
-#include "ArMeshTile.h"
-#include "Memory/STLAllocator.h"
-#include <vector>
+#include "Object/RefObject.h"
+#include "Object/SmartPointer.h"
+#include <DetourNavMeshQuery.h>
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
 #include "Memory/TCMallocAllocator.h"
-#define ArMeshData_Alloc	TCMallocAllocator
+#define ArQuery_Alloc	TCMallocAllocator
 #else
-#define ArMeshData_Alloc	Allocator
+#define ArQuery_Alloc	Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-class ArMeshData : public RefObject<ArMeshData_Alloc>
+class ArMesh;
+
+class ArQuery : public RefObject<ArQuery_Alloc>
 {
 public:
-	VISITABLE_DECL_NONVIRTUAL(ArMeshDataSerializer)
+	ArQuery();
+	virtual ~ArQuery();
 
-public:
-	ArMeshData();
-	ArMeshData(const dtNavMeshParams& params);
+	dtStatus init(const ArMesh* mesh, int maxNodes);
 
-	void init(const dtNavMeshParams& params);
+	dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef
+			, const float* startPos, const float* endPos, const dtQueryFilter* filter);
+	dtStatus updateSlicedFindPath(int maxIter, int* doneIters);
+	dtStatus finalizeSlicedFindPath(dtPolyRef* path, int* pathCount, int maxPath);
+	dtStatus finalizeSlicedFindPathPartial(
+			const dtPolyRef* existing, int existingSize, dtPolyRef* path, int* pathCount, int maxPath);
 
-	const dtNavMeshParams& getParams() const;
-	int getCount() const;
-
-	bool addTile(ArMeshTilePtr tile);
-	void removeTile(int idx);
-	ArMeshTile* getTile(int idx) const;
+	const dtNavMeshQuery* backend() const;
 
 private:
-	dtNavMeshParams mParams;
-	std::vector<
-		ArMeshTilePtr,
-		STLAllocator<ArMeshTilePtr, ArMeshData_Alloc>
-	> mTiles;
-	int mCount;
+	dtNavMeshQuery* mBackend;
 };
 
-DeclareSmartPointer(ArMeshData);
+DeclareSmartPointer(ArQuery);
 
-#endif  // __AutoRecast_ArMeshData_H__
+#endif  // __AutoRecast_ArQuery_H__

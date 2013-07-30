@@ -16,47 +16,42 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __AutoRecast_ArMeshData_H__
-#define __AutoRecast_ArMeshData_H__
+#ifndef __AutoRecast_ArMesh_H__
+#define __AutoRecast_ArMesh_H__
 
-#include "ArMeshTile.h"
-#include "Memory/STLAllocator.h"
-#include <vector>
+#include "Object/RefObject.h"
+#include "Object/SmartPointer.h"
+#include <DetourNavMesh.h>
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(USE_TCMALLOC)
 #include "Memory/TCMallocAllocator.h"
-#define ArMeshData_Alloc	TCMallocAllocator
+#define ArMesh_Alloc	TCMallocAllocator
 #else
-#define ArMeshData_Alloc	Allocator
+#define ArMesh_Alloc	Allocator
 #endif  // (_WIN32 || _WIN64) && USE_TCMALLOC
 
-class ArMeshData : public RefObject<ArMeshData_Alloc>
+class ArMeshTile;
+
+class ArMesh : public RefObject<ArMesh_Alloc>
 {
 public:
-	VISITABLE_DECL_NONVIRTUAL(ArMeshDataSerializer)
+	ArMesh();
+	virtual ~ArMesh();
 
-public:
-	ArMeshData();
-	ArMeshData(const dtNavMeshParams& params);
+	dtStatus init(const dtNavMeshParams& params);
+	dtStatus addTile(const ArMeshTile* tile, dtTileRef* ref = 0);
+	dtStatus removeTile(dtTileRef ref);
 
-	void init(const dtNavMeshParams& params);
+	dtStatus setPolyFlags(dtPolyRef ref, unsigned short flags);
+	dtStatus setPolyArea(dtPolyRef ref, unsigned char area);
+	dtStatus restoreTileState(dtMeshTile* tile, const unsigned char* data, int maxDataSize);
 
-	const dtNavMeshParams& getParams() const;
-	int getCount() const;
-
-	bool addTile(ArMeshTilePtr tile);
-	void removeTile(int idx);
-	ArMeshTile* getTile(int idx) const;
+	const dtNavMesh* backend() const;
 
 private:
-	dtNavMeshParams mParams;
-	std::vector<
-		ArMeshTilePtr,
-		STLAllocator<ArMeshTilePtr, ArMeshData_Alloc>
-	> mTiles;
-	int mCount;
+	dtNavMesh* mBackend;
 };
 
-DeclareSmartPointer(ArMeshData);
+DeclareSmartPointer(ArMesh);
 
-#endif  // __AutoRecast_ArMeshData_H__
+#endif  // __AutoRecast_ArMesh_H__
