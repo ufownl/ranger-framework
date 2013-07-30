@@ -16,55 +16,37 @@
  *	along with RangerFramework.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ArMeshImporter.h"
 #include "ArMeshTile.h"
+#include "ArMeshData.h"
+#include "ArMesh.h"
 
-VISITABLE_IMPL(ArMeshTile, ArMeshDataSerializer)
-
-ArMeshTile::ArMeshTile()
-	: mData(0)
-	, mSize(0)
-	, mRef(0)
+ArMeshImporter::ArMeshImporter(ArMesh& mesh)
+	: mMesh(mesh)
 {
 }
 
-ArMeshTile::ArMeshTile(unsigned char* data, int size, dtTileRef ref /* = 0 */)
-	: mData(data)
-	, mSize(size)
-	, mRef(ref)
+bool ArMeshImporter::onVisit(ArMeshTile& obj)
 {
+	return dtStatusSucceed(mMesh.addTile(&obj));
 }
 
-ArMeshTile::~ArMeshTile()
+bool ArMeshImporter::onVisit(ArMeshData& obj)
 {
-	if (mData)
+	if (dtStatusFailed(mMesh.init(obj.getParams())))
 	{
-		dtFree(mData);
-	}
-}
-
-void ArMeshTile::init(unsigned char* data, int size, dtTileRef ref /* = 0 */)
-{
-	if (mData)
-	{
-		dtFree(mData);
+		return false;
 	}
 
-	mData = data;
-	mSize = size;
-	mRef = ref;
-}
+	for (int i = 0; i < obj.getCount(); ++i)
+	{
+		ArMeshTile* tile = obj.getTile(i);
 
-unsigned char* ArMeshTile::getData() const
-{
-	return mData;
-}
+		if (tile && !serialize(*tile))
+		{
+			return false;
+		}
+	}
 
-int ArMeshTile::getSize() const
-{
-	return mSize;
-}
-
-dtTileRef ArMeshTile::getRef() const
-{
-	return mRef;
+	return true;
 }

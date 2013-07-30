@@ -33,7 +33,7 @@ ArMeshData::ArMeshData(const dtNavMeshParams& params)
 {
 }
 
-void ArMeshData::initialize(const dtNavMeshParams& params)
+void ArMeshData::init(const dtNavMeshParams& params)
 {
 	mParams = params;
 	mTiles.clear();
