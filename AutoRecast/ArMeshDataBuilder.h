@@ -39,7 +39,7 @@ typedef boost::function<
 class ArMeshDataBuilder : public RefObject<ArMeshDataBuilder_Alloc>
 {
 public:
-	ArMeshDataBuilder(rcContext *ctx, const InputGeom* geom, ArMeshProcess proc = 0);
+	ArMeshDataBuilder(rcContext* ctx, const InputGeom* geom, ArMeshProcess proc = 0);
 
 	ArMeshDataPtr build(bool buildTiles = true, int* otw = 0, int* oth = 0);
 	ArMeshTilePtr buildTile(int tx, int ty);

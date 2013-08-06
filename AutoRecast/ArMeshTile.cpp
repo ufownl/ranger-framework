@@ -36,18 +36,12 @@ ArMeshTile::ArMeshTile(unsigned char* data, int size, dtTileRef ref /* = 0 */)
 
 ArMeshTile::~ArMeshTile()
 {
-	if (mData)
-	{
-		dtFree(mData);
-	}
+	clear();
 }
 
 void ArMeshTile::init(unsigned char* data, int size, dtTileRef ref /* = 0 */)
 {
-	if (mData)
-	{
-		dtFree(mData);
-	}
+	clear();
 
 	mData = data;
 	mSize = size;
@@ -67,4 +61,13 @@ int ArMeshTile::getSize() const
 dtTileRef ArMeshTile::getRef() const
 {
 	return mRef;
+}
+
+void ArMeshTile::clear()
+{
+	if (mData)
+	{
+		dtFree(mData);
+		mData = 0;
+	}
 }

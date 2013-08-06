@@ -35,9 +35,11 @@ ArMeshData::ArMeshData(const dtNavMeshParams& params)
 
 void ArMeshData::init(const dtNavMeshParams& params)
 {
+	tile_table_t tiles(params.maxTiles);
+
 	mParams = params;
-	mTiles.clear();
-	mTiles.resize(params.maxTiles);
+	using std::swap;
+	swap(mTiles, tiles);
 	mCount = 0;
 }
 
