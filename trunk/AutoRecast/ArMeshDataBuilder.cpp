@@ -91,7 +91,7 @@ ArMeshDataPtr ArMeshDataBuilder::build(bool buildTiles /* = true */, int* otw /*
 
 	dtNavMeshParams params;
 
-	rcVcopy(params.orig, mGeom->getMeshBoundsMin());
+	rcVcopy(params.orig, bmin);
 	params.tileWidth = mTileSize * mCellSize;
 	params.tileHeight = mTileSize * mCellSize;
 	params.maxTiles = maxTiles;
@@ -365,7 +365,7 @@ ArMeshTilePtr ArMeshDataBuilder::buildTile(int tx, int ty)
 
 	if (!rcBuildPolyMeshDetail(mContext, *pmesh, *chf, cfg.detailSampleDist, cfg.detailSampleMaxError, *dmesh))
 	{
-		mContext->log(RC_LOG_ERROR, "Could build polymesh detail.");
+		mContext->log(RC_LOG_ERROR, "Could not build polymesh detail.");
 		rcFreePolyMeshDetail(dmesh);
 		rcFreePolyMesh(pmesh);
 		rcFreeContourSet(cset);

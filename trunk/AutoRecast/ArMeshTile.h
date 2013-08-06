@@ -48,6 +48,9 @@ public:
 	dtTileRef getRef() const;
 
 private:
+	void clear();
+
+private:
 	unsigned char* mData;
 	int mSize;
 	dtTileRef mRef;

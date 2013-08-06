@@ -49,11 +49,13 @@ public:
 	ArMeshTile* getTile(int idx) const;
 
 private:
-	dtNavMeshParams mParams;
-	std::vector<
+	typedef std::vector<
 		ArMeshTilePtr,
 		STLAllocator<ArMeshTilePtr, ArMeshData_Alloc>
-	> mTiles;
+	> tile_table_t;
+	
+	dtNavMeshParams mParams;
+	tile_table_t mTiles;
 	int mCount;
 };
 
