@@ -57,7 +57,7 @@ bool ArMeshExporter::onVisit(ArMeshData& obj)
 			return false;
 		}
 
-		memcpy(data, t->data, t->dataSize);
+		memcpy(data, t->data, t->dataSize * sizeof(unsigned char));
 
 		ArMeshTilePtr tile;
 
