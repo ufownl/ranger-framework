@@ -17,7 +17,6 @@
  */
 
 #include "Thread/Coroutine.h"
-#include "Process/AtExit.h"
 
 #if !defined(_WIN32) && !defined(_WIN64)
 
