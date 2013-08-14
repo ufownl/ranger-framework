@@ -17,15 +17,32 @@
  */
 
 #include "Thread/Coroutine.h"
+#include "Process/AtExit.h"
 
 #if !defined(_WIN32) && !defined(_WIN64)
 
 void release_callstack(void* p)
 {
-	delete static_cast<Coroutine::CallStack*>(p);
+	if (!p) return;
+	static_cast<Coroutine::CallStack*>(p)->~stack();
+	Coroutine_Alloc::deallocate(p);
 }
 
-ThreadLocalStorage<Coroutine::CallStack> Coroutine::msCallStack(release_callstack);
+Coroutine::TLSCS::TLSCS()
+	: ThreadLocalStorage(release_callstack)
+{
+}
+
+Coroutine::TLSCS::~TLSCS()
+{
+	release_callstack(*this);
+}
+
+Coroutine::TLSCS& Coroutine::TLSCS::operator = (CallStack* p)
+{
+	*static_cast<ThreadLocalStorage<CallStack>*>(this) = p;
+	return *this;
+}
 
 #endif  // !_WIN32 && !_WIN64
 
@@ -126,8 +143,8 @@ void Coroutine::common_context_func()
 
     inst->self->mFunc();
     inst->state = eDEAD;
-	assert(msCallStack);
-    msCallStack->pop();
+	assert(TlscsHolder::instance());
+    TlscsHolder::instance()->pop();
 }
 #endif  // _WIN32 || _WIN64
 
@@ -136,8 +153,8 @@ Coroutine::Instance* Coroutine::getCurrentInstance()
 #if defined(_WIN32) || defined(_WIN64)
 	return static_cast<Instance*>(GetFiberData());
 #else
-	assert(msCallStack);
-    return &msCallStack->top()->mInst;
+	assert(TlscsHolder::instance());
+    return &TlscsHolder::instance()->top()->mInst;
 #endif  // _WIN32 || _WIN64
 }
 
@@ -150,11 +167,11 @@ void Coroutine::yield_impl(Instance* inst)
 		SwitchToFiber(inst->parent->fiber);
 	}
 #else
-	assert(msCallStack);
-    if (!msCallStack->empty())
+	assert(TlscsHolder::instance());
+    if (!TlscsHolder::instance()->empty())
     {
         inst->state = eSUSPENDED;
-        msCallStack->pop();
+        TlscsHolder::instance()->pop();
         swapcontext(&inst->context, &inst->parent);
     }
 #endif  // _WIN32 || _WIN64
@@ -173,11 +190,17 @@ void Coroutine::resume_impl()
     if (mInst.state == eSUSPENDED)
     {
         mInst.state = eRUNNING;
-		if (!msCallStack)
+		if (!TlscsHolder::instance())
 		{
-			msCallStack = new CallStack;
+#ifdef _DEBUG
+			void* p = Coroutine_Alloc::allocate(sizeof(CallStack), __FILE__, __LINE__);
+#else
+			void* p = Coroutine_Alloc::allocate(sizeof(CallStack));
+#endif  // _DEBUG
+			if (!p) throw std::bad_alloc();
+			TlscsHolder::instance() = new(p) CallStack;
 		}
-        msCallStack->push(this);
+        TlscsHolder::instance()->push(this);
         swapcontext(&mInst.parent, &mInst.context);
     }
 #endif  // _WIN32 || _WIN64

@@ -20,9 +20,10 @@
 #define __Utils_Thread_ThreadLocalStorage_H__
 
 #include <pthread.h>
+#include <boost/noncopyable.hpp>
 
 template <class T>
-class ThreadLocalStorage
+class ThreadLocalStorage : public boost::noncopyable
 {
 public:
 	typedef void (*free_func_t)(void*);
@@ -39,7 +40,7 @@ public:
 		pthread_setspecific(mKey, p);
 	}
 
-	~ThreadLocalStorage()
+	virtual ~ThreadLocalStorage()
 	{
 		pthread_key_delete(mKey);
 	}

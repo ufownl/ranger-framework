@@ -21,6 +21,8 @@
 
 #include "Object/RefObject.h"
 #include "Object/SmartPointer.h"
+#include "Object/Singleton.h"
+#include "Memory/STLAllocator.h"
 #if !defined(_WIN32) && !defined(_WIN64)
 #include "Thread/ThreadLocalStorage.h"
 #endif  // !_WIN32 && !_WIN64
@@ -50,7 +52,31 @@ public:
 	};
 
 #if !defined(_WIN32) && !defined(_WIN64)
-	typedef std::stack<Coroutine*> CallStack;
+	typedef std::stack<
+		Coroutine*,
+		std::deque<
+			Coroutine*,
+			STLAllocator<Coroutine*, Coroutine_Alloc>
+		>
+	> CallStack;
+
+	struct TLSCS
+		: public ThreadLocalStorage<CallStack>
+		, public MemObject<Coroutine_Alloc>
+	{
+		typedef ThreadLocalStorage<CallStack>::free_func_t free_func_t;
+
+		TLSCS();
+		virtual ~TLSCS();
+
+		TLSCS& operator = (CallStack* p);
+	};
+
+	typedef SingletonHolder<
+		TLSCS,
+		SingletonOpRfNewCreation, 
+		SingletonDestroyAtExit
+	> TlscsHolder;
 #endif  // !_WIN32 && !_WIN64
 
 public:
@@ -122,8 +148,6 @@ private:
 	const void* mParams;
 #if !defined(_WIN32) && !defined(_WIN64)
     char* mStack;
-
-	static ThreadLocalStorage<CallStack> msCallStack;
 #endif  // !_WIN32 && !_WIN64
 };
 
