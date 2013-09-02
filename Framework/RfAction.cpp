@@ -48,16 +48,19 @@ void RfAction::setTimeout(long timeout)
 
 bool RfAction::execute()
 {
+	if (!mHandler->insert(this))
+	{
+		return false;
+	}
+
 	if (onExecute())
 	{
-		if (!mHandler->insert(this))
-		{
-			return false;
-		}
-
 		mIsActive = true;
 		tick();
-		shutdown();
+	}
+	else
+	{
+		mHandler->remove(this);
 	}
 
 	return true;
@@ -67,6 +70,7 @@ void RfAction::response(const void* params)
 {
 	if (onResponse(params))
 	{
+		shutdown();
 		mIsActive = false;
 		mHandler->remove(this);
 	}
@@ -89,14 +93,14 @@ bool RfAction::onTick(long escape)
 		return false;
 	}
 
-	if (escape >= mTimeout)
-	{
-		response(0);
-		return false;
-	}
-
 	if (mTimeout >= 0)
 	{
+		if (escape >= mTimeout)
+		{
+			response(0);
+			return false;
+		}
+
 		mHandler->mActTick.push(this);
 	}
 
